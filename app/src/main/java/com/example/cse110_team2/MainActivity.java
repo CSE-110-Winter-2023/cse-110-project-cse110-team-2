@@ -7,11 +7,13 @@ import androidx.core.content.ContextCompat;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -48,6 +50,16 @@ public class MainActivity extends AppCompatActivity {
 
     public void onNewLocationBtnClicked(View view) {
         Intent intent = new Intent(this, InputLocation.class);
-        startActivity(intent);
+
+        SharedPreferences preferences = getSharedPreferences("IDvalue", 0);
+        String locationThreeName = preferences.getString("locationThreeName", "N/A");
+
+        Log.i("Location 3", locationThreeName);
+        if(locationThreeName != "N/A"){
+            Utilities.showAlert(this, "You cannot save any more locations");
+        }else{
+            startActivity(intent);
+        }
+
     }
 }
