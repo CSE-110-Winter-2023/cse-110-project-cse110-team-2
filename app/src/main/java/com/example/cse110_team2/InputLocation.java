@@ -38,10 +38,7 @@ public class InputLocation extends AppCompatActivity {
         String newLocName = newLocationName.getText().toString();
         String newLocLat = newLocationLat.getText().toString();
         String newLocLon = newLocationLon.getText().toString();
-        Log.i("NISHANTH Name", newLocName);
-        Log.i("NISHANTH Name", newLocLat);
-        Log.i("NISHANTH Name", newLocLon);
-        Log.i("NISHANTH NAME", " " + newLocLon.length());
+
         if(newLocName.length() == 0){
             return;
         }
