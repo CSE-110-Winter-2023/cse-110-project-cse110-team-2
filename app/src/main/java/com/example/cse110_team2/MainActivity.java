@@ -61,6 +61,13 @@ public class MainActivity extends AppCompatActivity {
                 //lat.setText("Latitude: " + String.valueOf(myloc.getLat()));
             }
         });
+
+        SharedPreferences preferences = getSharedPreferences("IDvalue", 0);
+        String locName = preferences.getString("locationOneName", "N/A");
+        if(locName == "N/A"){
+            Intent intent = new Intent(this, InputLocation.class);
+            startActivity(intent);
+        }
     }
 
     private void compassUpdate() {
