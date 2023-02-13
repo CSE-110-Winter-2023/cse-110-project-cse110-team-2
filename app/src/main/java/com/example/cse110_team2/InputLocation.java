@@ -35,21 +35,28 @@ public class InputLocation extends AppCompatActivity {
         TextView newLocationLat = (TextView) findViewById(R.id.location_lat);
         TextView newLocationLon = (TextView) findViewById(R.id.location_lon);
 
+        String newLocName = newLocationName.getText().toString();
+        String newLocLat = newLocationLat.getText().toString();
+        String newLocLon = newLocationLon.getText().toString();
+
+        if(newLocName.length() == 0){
+            return;
+        }
 
         if(locationOneName == "N/A"){
-            editor.putString("locationOneName", newLocationName.getText().toString());
-            editor.putString("locationOneLat", newLocationLat.getText().toString());
-            editor.putString("locationOneLon", newLocationLon.getText().toString());
+            editor.putString("locationOneName", newLocName);
+            editor.putString("locationOneLat", newLocLat);
+            editor.putString("locationOneLon", newLocLon);
 
         }else if(locationTwoName == "N/A"){
-            editor.putString("locationTwoName", newLocationName.getText().toString());
-            editor.putString("locationTwoLat", newLocationLat.getText().toString());
-            editor.putString("locationTwoLon", newLocationLon.getText().toString());
+            editor.putString("locationTwoName", newLocName);
+            editor.putString("locationTwoLat", newLocLat);
+            editor.putString("locationTwoLon", newLocLon);
 
         }else if(locationThreeName == "N/A"){
-            editor.putString("locationThreeName", newLocationName.getText().toString());
-            editor.putString("locationThreeLat", newLocationLat.getText().toString());
-            editor.putString("locationThreeLon", newLocationLon.getText().toString());
+            editor.putString("locationThreeName",newLocName);
+            editor.putString("locationThreeLat", newLocLat);
+            editor.putString("locationThreeLon", newLocLon);
 
         }else{
 
