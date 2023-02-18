@@ -28,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
     private LocationManager locationManager;
     private PointRelation locationRelater;
     private boolean firstLocUpdate;
+    private MyLocation myloc;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
         //TextView lon= findViewById(R.id.Lon);
         //TextView lat= findViewById(R.id.Lat);
 
-        MyLocation myloc = new MyLocation(0,0);
+        myloc = new MyLocation(0,0);
         locationRelater = new PointRelation(myloc);
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
@@ -188,6 +189,9 @@ public class MainActivity extends AppCompatActivity {
         circle.setLayoutParams(layoutParams);
     }
 
+    public MyLocation getLocation(){
+        return myloc;
+    }
 
 
     @Override
