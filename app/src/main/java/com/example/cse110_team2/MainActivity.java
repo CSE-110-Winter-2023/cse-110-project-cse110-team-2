@@ -125,6 +125,7 @@ public class MainActivity extends AppCompatActivity {
                 legendCircle.setVisibility(View.VISIBLE);
                 legendText.setVisibility(View.VISIBLE);
                 circle.setVisibility(View.VISIBLE);
+                circle.bringToFront();
             }
         } else {
             legendCircle.setVisibility(View.INVISIBLE);
@@ -146,27 +147,35 @@ public class MainActivity extends AppCompatActivity {
         Log.i("overlap", "overlay23: " + overlay23);
         Log.i("overlap", "overlay31: " + overlay31);
         if ((overlay12 && (overlay23 || overlay31)) || (overlay23 && overlay31)){
-            setCircleRadius(circleOne, (int)(158 * scale + 0.5f));
-            setCircleRadius(circleTwo, (int)(168 * scale + 0.5f));
-            setCircleRadius(circleThree, (int)(178 * scale + 0.5f));
-            setCircleSize(circleOne, (int)(10 * scale + 0.5f));
-            setCircleSize(circleTwo, (int)(10 * scale + 0.5f));
-            setCircleSize(circleThree, (int)(10 * scale + 0.5f));
+            setCircleRadius(circleOne, (int)(360 + 0.5f));
+            setCircleRadius(circleTwo, (int)(410 + 0.5f));
+            setCircleRadius(circleThree, (int)(460 + 0.5f));
+            setCircleSize(circleOne, (int)(50 + 0.5f));
+            setCircleSize(circleTwo, (int)(50 + 0.5f));
+            setCircleSize(circleThree, (int)(50 + 0.5f));
         } else if (overlay12) {
-            setCircleRadius(circleOne, (int)(158 * scale + 0.5f));
-            setCircleRadius(circleTwo, (int)(172 * scale + 0.5f));
-            setCircleSize(circleOne, (int)(14 * scale + 0.5f));
-            setCircleSize(circleTwo, (int)(14 * scale + 0.5f));
+            setCircleRadius(circleOne, (int)(360 + 0.5f));
+            setCircleRadius(circleTwo, (int)(410 + 0.5f));
+            setCircleSize(circleOne, (int)(50 + 0.5f));
+            setCircleSize(circleTwo, (int)(50 + 0.5f));
         } else if (overlay23) {
-            setCircleRadius(circleTwo, (int)(158 * scale + 0.5f));
-            setCircleRadius(circleThree, (int)(172 * scale + 0.5f));
-            setCircleSize(circleTwo, (int)(14 * scale + 0.5f));
-            setCircleSize(circleThree, (int)(14 * scale + 0.5f));
+            setCircleRadius(circleTwo, (int)(360 + 0.5f));
+            setCircleRadius(circleThree, (int)(410 + 0.5f));
+            setCircleSize(circleTwo, (int)(50 + 0.5f));
+            setCircleSize(circleThree, (int)(50 + 0.5f));
         } else if (overlay31) {
-            setCircleRadius(circleOne, (int)(158 * scale + 0.5f));
-            setCircleRadius(circleThree, (int)(172 * scale + 0.5f));
-            setCircleSize(circleOne, (int)(14 * scale + 0.5f));
-            setCircleSize(circleThree, (int)(14 * scale + 0.5f));
+            setCircleRadius(circleOne, (int)(360 + 0.5f));
+            setCircleRadius(circleThree, (int)(410 + 0.5f));
+            setCircleSize(circleOne, (int)(50 + 0.5f));
+            setCircleSize(circleThree, (int)(50 + 0.5f));
+        }else{
+            setCircleRadius(circleOne, (int)(410 + 0.5f));
+            setCircleRadius(circleTwo, (int)(410 + 0.5f));
+            setCircleRadius(circleThree, (int)(410 + 0.5f));
+            setCircleSize(circleOne, (int)(50 + 0.5f));
+            setCircleSize(circleTwo, (int)(50 + 0.5f));
+            setCircleSize(circleThree, (int)(50 + 0.5f));
+
         }
     }
     private boolean checkAngleOverlap(ImageView circleOne, ImageView circleTwo){
