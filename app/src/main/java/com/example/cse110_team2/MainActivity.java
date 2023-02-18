@@ -26,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
 
     private LocationManager locationManager;
     private PointRelation locationRelater;
+    private OrientationService orientationService;
     private boolean firstLocUpdate;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +35,8 @@ public class MainActivity extends AppCompatActivity {
         firstLocUpdate = false;
         //TextView lon= findViewById(R.id.Lon);
         //TextView lat= findViewById(R.id.Lat);
+
+        orientationService = OrientationService.singleton(MainActivity.this);
 
         MyLocation myloc = new MyLocation(0,0);
         locationRelater = new PointRelation(myloc);
@@ -129,6 +132,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        orientationService.unregisterSensorListeners();
+    }
 
     @Override
     protected void onResume() {
