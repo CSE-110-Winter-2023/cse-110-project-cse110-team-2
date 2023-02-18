@@ -130,18 +130,6 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
-            android:id="@+id/blueImage"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            app:layout_constraintCircle="@+id/compasslayout"
-            app:layout_constraintCircleAngle="0"
-            app:layout_constraintCircleRadius="164dp"
-            android:visibility="invisible"
-            app:srcCompat="@drawable/bluecircle"
-            tools:layout_editor_absoluteX="158dp"
-            tools:layout_editor_absoluteY="158dp" />
-
-        <ImageView
             android:id="@+id/redImage"
             android:layout_width="24dp"
             android:layout_height="24dp"
@@ -154,13 +142,25 @@
             tools:layout_editor_absoluteY="158dp" />
 
         <ImageView
-            android:id="@+id/yellowImage"
+            android:id="@+id/blueImage"
             android:layout_width="24dp"
             android:layout_height="24dp"
             app:layout_constraintCircle="@+id/compasslayout"
-            app:layout_constraintCircleAngle="90"
+            app:layout_constraintCircleAngle="0"
             app:layout_constraintCircleRadius="164dp"
             android:visibility="invisible"
+            app:srcCompat="@drawable/bluecircle"
+            tools:layout_editor_absoluteX="158dp"
+            tools:layout_editor_absoluteY="158dp" />
+
+        <ImageView
+            android:id="@+id/yellowImage"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:visibility="invisible"
+            app:layout_constraintCircle="@+id/compasslayout"
+            app:layout_constraintCircleAngle="90"
+            app:layout_constraintCircleRadius="164dp"
             app:srcCompat="@drawable/yellowcircle"
             tools:layout_editor_absoluteX="158dp"
             tools:layout_editor_absoluteY="158dp" />

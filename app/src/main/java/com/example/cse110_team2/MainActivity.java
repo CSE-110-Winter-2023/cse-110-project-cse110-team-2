@@ -15,6 +15,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.media.Image;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -108,6 +109,8 @@ public class MainActivity extends AppCompatActivity {
         legendText = (TextView) findViewById(R.id.yellowlegendtext);
 
         updateSpecificCircle(locName,locLat,locLon,circle,legendCircle,legendText);
+
+        solveOverlap();
     }
 
     private void updateSpecificCircle(String locName, String locLat, String locLon, ImageView circle, ImageView legendCircle, TextView legendText) {
@@ -128,6 +131,63 @@ public class MainActivity extends AppCompatActivity {
             circle.setVisibility(View.INVISIBLE);
         }
     }
+
+    private void solveOverlap(){
+        final float scale = this.getResources().getDisplayMetrics().density;
+        Log.i("overlap", "scale: " + scale);
+        ImageView circleOne = findViewById(R.id.redImage);
+        ImageView circleTwo = findViewById(R.id.blueImage);
+        ImageView circleThree = findViewById(R.id.yellowImage);
+        boolean overlay12 = checkAngleOverlap(circleOne,circleTwo);
+        boolean overlay23 = checkAngleOverlap(circleTwo,circleThree);
+        boolean overlay31 = checkAngleOverlap(circleThree,circleOne);
+        Log.i("overlap", "overlay12: " + overlay12);
+        Log.i("overlap", "overlay23: " + overlay23);
+        Log.i("overlap", "overlay31: " + overlay31);
+        if ((overlay12 && (overlay23 || overlay31)) || (overlay23 && overlay31)){
+            setCircleRadius(circleOne, (int)(158 * scale + 0.5f));
+            setCircleRadius(circleTwo, (int)(168 * scale + 0.5f));
+            setCircleRadius(circleThree, (int)(178 * scale + 0.5f));
+            setCircleSize(circleOne, (int)(10 * scale + 0.5f));
+            setCircleSize(circleTwo, (int)(10 * scale + 0.5f));
+            setCircleSize(circleThree, (int)(10 * scale + 0.5f));
+        } else if (overlay12) {
+            setCircleRadius(circleOne, (int)(158 * scale + 0.5f));
+            setCircleRadius(circleTwo, (int)(172 * scale + 0.5f));
+            setCircleSize(circleOne, (int)(14 * scale + 0.5f));
+            setCircleSize(circleTwo, (int)(14 * scale + 0.5f));
+        } else if (overlay23) {
+            setCircleRadius(circleTwo, (int)(158 * scale + 0.5f));
+            setCircleRadius(circleThree, (int)(172 * scale + 0.5f));
+            setCircleSize(circleTwo, (int)(14 * scale + 0.5f));
+            setCircleSize(circleThree, (int)(14 * scale + 0.5f));
+        } else if (overlay31) {
+            setCircleRadius(circleOne, (int)(158 * scale + 0.5f));
+            setCircleRadius(circleThree, (int)(172 * scale + 0.5f));
+            setCircleSize(circleOne, (int)(14 * scale + 0.5f));
+            setCircleSize(circleThree, (int)(14 * scale + 0.5f));
+        }
+    }
+    private boolean checkAngleOverlap(ImageView circleOne, ImageView circleTwo){
+        ConstraintLayout.LayoutParams layoutParamsOne = (ConstraintLayout.LayoutParams) circleOne.getLayoutParams();
+        ConstraintLayout.LayoutParams layoutParamsTwo = (ConstraintLayout.LayoutParams) circleTwo.getLayoutParams();
+//        Log.i("overlap", "Angle diff: " + Math.abs(layoutParamsOne.circleAngle-layoutParamsTwo.circleAngle));
+//        return false;
+        return Math.abs(layoutParamsOne.circleAngle-layoutParamsTwo.circleAngle) < 10;
+    }
+    private void setCircleRadius(ImageView circle, int radius) {
+        ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) circle.getLayoutParams();
+        layoutParams.circleRadius = radius;
+        circle.setLayoutParams(layoutParams);
+    }
+
+    private void setCircleSize(ImageView circle, int size) {
+        ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) circle.getLayoutParams();
+        layoutParams.width = size;
+        layoutParams.height = size;
+        circle.setLayoutParams(layoutParams);
+    }
+
 
 
     @Override
