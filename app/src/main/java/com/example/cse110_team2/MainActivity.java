@@ -228,7 +228,6 @@ public class MainActivity extends AppCompatActivity {
             heading_data.postValue(heading_float);
 
             orientationService.setMockOrientationSource(heading_data);
-
         }
 
 
