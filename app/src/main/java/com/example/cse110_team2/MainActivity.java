@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.MutableLiveData;
 
 import android.Manifest;
 import android.content.Intent;
@@ -23,6 +24,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
+
 public class MainActivity extends AppCompatActivity {
 
     private LocationManager locationManager;
@@ -30,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
     private OrientationService orientationService;
     private boolean firstLocUpdate;
     private MyLocation myloc;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,6 +47,9 @@ public class MainActivity extends AppCompatActivity {
 
 
         orientationService = OrientationService.singleton(MainActivity.this);
+        orientationService.getOrientation().observe(this, azimuth -> {
+            compassUpdate(azimuth);
+        });
 
         MyLocation myloc = new MyLocation(0,0);
         
@@ -63,21 +73,24 @@ public class MainActivity extends AppCompatActivity {
                 firstLocUpdate = true;
                 myloc.setLon(location.getLongitude());
                 myloc.setLat(location.getLatitude());
-                compassUpdate();
+                compassUpdate(orientationService.getOrientation().getValue());
                 //lon.setText("Longitude: " + String.valueOf(myloc.getLon()));
                 //lat.setText("Latitude: " + String.valueOf(myloc.getLat()));
             }
         });
 
+
         SharedPreferences preferences = getSharedPreferences("IDvalue", 0);
         String locName = preferences.getString("locationOneName", "N/A");
-        if(locName == "N/A"){
+        if(locName == "N/A") {
             Intent intent = new Intent(this, InputLocation.class);
             startActivity(intent);
         }
+
+
     }
 
-    private void compassUpdate() {
+    private void compassUpdate(Float az) {
         SharedPreferences preferences = getSharedPreferences("IDvalue", 0);
         String locName;
         String locLat;
@@ -85,6 +98,9 @@ public class MainActivity extends AppCompatActivity {
         ImageView circle;
         ImageView legendCircle;
         TextView legendText;
+
+        ImageView compassCircle;
+
 
 //        First Point
         locName = preferences.getString("locationOneName", "N/A");
@@ -94,7 +110,8 @@ public class MainActivity extends AppCompatActivity {
         legendCircle = (ImageView) findViewById(R.id.redlegendcircle);
         legendText = (TextView) findViewById(R.id.redlegendtext);
 
-        updateSpecificCircle(locName,locLat,locLon,circle,legendCircle,legendText);
+        updateSpecificCircle(locName,locLat,locLon,circle,legendCircle,legendText, az);
+        rotateLoc(circle, az);
 
         //        Second Point
         locName = preferences.getString("locationTwoName", "N/A");
@@ -104,7 +121,8 @@ public class MainActivity extends AppCompatActivity {
         legendCircle = (ImageView) findViewById(R.id.bluelegendcircle);
         legendText = (TextView) findViewById(R.id.bluelegendtext);
 
-        updateSpecificCircle(locName,locLat,locLon,circle,legendCircle,legendText);
+        updateSpecificCircle(locName,locLat,locLon,circle,legendCircle,legendText, az);
+        rotateLoc(circle, az);
 
         //        Third Point
         locName = preferences.getString("locationThreeName", "N/A");
@@ -114,12 +132,19 @@ public class MainActivity extends AppCompatActivity {
         legendCircle = (ImageView) findViewById(R.id.yellowlegendcircle);
         legendText = (TextView) findViewById(R.id.yellowlegendtext);
 
-        updateSpecificCircle(locName,locLat,locLon,circle,legendCircle,legendText);
+        updateSpecificCircle(locName,locLat,locLon,circle,legendCircle,legendText, az);
+        rotateLoc(circle, az);
+
+        // Update compass overlay
+        compassCircle = (ImageView) findViewById(R.id.compassImage);
+        rotateImg(compassCircle, az);
 
         solveOverlap();
     }
 
-    private void updateSpecificCircle(String locName, String locLat, String locLon, ImageView circle, ImageView legendCircle, TextView legendText) {
+    private void updateSpecificCircle(String locName, String locLat, String locLon,
+                                      ImageView circle, ImageView legendCircle,
+                                      TextView legendText, Float az) {
         if (locName != "N/A") {
             Double newAngle = locationRelater.angleCalculation(Double.parseDouble(locLat),Double.parseDouble(locLon));
             legendText.setText(locName);
@@ -137,6 +162,32 @@ public class MainActivity extends AppCompatActivity {
             legendText.setVisibility(View.INVISIBLE);
             circle.setVisibility(View.INVISIBLE);
         }
+    }
+
+
+
+    /**
+     * Rotates the selected image view about a certain angle based on heading.
+     * @param img The image view compass to rotate
+     * @param az Azimuth from current heading
+     */
+    public void rotateImg(ImageView img, Float az) {
+        if (az == null) { az = 0.0F; }
+        double azDeg = Utilities.radToDeg(az);
+        img.setRotation((float) -(azDeg));
+    }
+
+    /**
+     * Rotates location circles
+     * @param img Location circle to rotate
+     * @param az Azimuth from current heading
+     */
+    public void rotateLoc(ImageView img, Float az) {
+        if (az == null) { return; }
+        double azDeg = Utilities.radToDeg(az);
+        ConstraintLayout.LayoutParams lp = (ConstraintLayout.LayoutParams) img.getLayoutParams();
+        lp.circleAngle -= azDeg;
+        img.setLayoutParams(lp);
     }
 
 
@@ -219,7 +270,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        compassUpdate();
+        compassUpdate(orientationService.getOrientation().getValue());
     }
 
     public void onNewLocationBtnClicked(View view) {

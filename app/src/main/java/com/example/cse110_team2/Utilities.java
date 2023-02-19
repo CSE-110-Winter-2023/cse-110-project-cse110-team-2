@@ -2,6 +2,7 @@ package com.example.cse110_team2;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import java.lang.Math;
 
 import java.util.Optional;
 
@@ -31,6 +32,10 @@ public class Utilities {
 
         AlertDialog alertDialog = alertBuilder.create();
         alertDialog.show();
+    }
+
+    public static double radToDeg(double rads) {
+        return Math.toDegrees(rads);
     }
 
 }
