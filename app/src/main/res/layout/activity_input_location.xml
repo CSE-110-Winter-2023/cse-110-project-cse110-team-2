@@ -63,10 +63,39 @@
         android:id="@+id/location_save_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="SAVE"
         android:onClick="onLocationSaveBtnClicked"
+        android:text="SAVE"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/location_lat" />
+        app:layout_constraintTop_toBottomOf="@+id/location_lat"
+        app:layout_constraintVertical_bias="0.355" />
+
+    <EditText
+        android:id="@+id/heading_text"
+        android:layout_width="111dp"
+        android:layout_height="42dp"
+        android:layout_marginTop="36dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="Heading"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.333"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/location_save_btn" />
+
+    <Button
+        android:id="@+id/heading_save_button"
+        android:layout_width="71dp"
+        android:layout_height="47dp"
+        android:layout_marginStart="25dp"
+
+        android:layout_marginTop="28dp"
+        android:onClick="onHeadingSaveBtnClicked"
+        android:text="OK"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.028"
+        app:layout_constraintStart_toEndOf="@+id/heading_text"
+        app:layout_constraintTop_toBottomOf="@+id/location_save_btn" />
 </androidx.constraintlayout.widget.ConstraintLayout>
