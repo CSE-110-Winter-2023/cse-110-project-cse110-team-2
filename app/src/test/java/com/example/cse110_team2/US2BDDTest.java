@@ -4,6 +4,8 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.lifecycle.Lifecycle;
 import androidx.test.core.app.ActivityScenario;
 import java.lang.*;
+import androidx.test.rule.GrantPermissionRule;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
@@ -21,7 +23,8 @@ import android.widget.TextView;
 
 @RunWith(RobolectricTestRunner.class)
 public class US2BDDTest {
-
+    @Rule
+    public GrantPermissionRule permissionRule = GrantPermissionRule.grant(android.Manifest.permission.ACCESS_FINE_LOCATION);
     @Test
     public void no_saved_locations_test() {
         // Set up activities

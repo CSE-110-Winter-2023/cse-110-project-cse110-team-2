@@ -3,6 +3,7 @@ package com.example.cse110_team2;
 import androidx.lifecycle.Lifecycle;
 import androidx.test.core.app.ActivityScenario;
 
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
@@ -10,16 +11,18 @@ import org.robolectric.shadows.ShadowIntent;
 
 import static org.junit.Assert.*;
 import static org.robolectric.Shadows.shadowOf;
-
+import androidx.test.rule.GrantPermissionRule;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.widget.TextView;
-
 @RunWith(RobolectricTestRunner.class)
+
 public class US1BDDTest {
+    @Rule public GrantPermissionRule permissionRule = GrantPermissionRule.grant(android.Manifest.permission.ACCESS_FINE_LOCATION);
 
     @Test
     public void us1_bdd_save_loc() {
+
         // Set up activities
         ActivityScenario<MainActivity> scenarioLaunch = ActivityScenario.launch(MainActivity.class);
 
