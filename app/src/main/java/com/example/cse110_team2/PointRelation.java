@@ -21,4 +21,7 @@ public class PointRelation {
         double bearingAngle = Math.atan2(x, y); //angle in radians
         return ((bearingAngle * 180 / Math.PI) + 360) % 360;
     }
+    public void setCoords(MyLocation myloc){
+        this.myCoords=myloc;
+    }
 }
