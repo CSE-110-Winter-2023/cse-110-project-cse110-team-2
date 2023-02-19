@@ -15,6 +15,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.media.Image;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -28,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
     private PointRelation locationRelater;
     private OrientationService orientationService;
     private boolean firstLocUpdate;
+    private MyLocation myloc;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,9 +38,11 @@ public class MainActivity extends AppCompatActivity {
         //TextView lon= findViewById(R.id.Lon);
         //TextView lat= findViewById(R.id.Lat);
 
+
         orientationService = OrientationService.singleton(MainActivity.this);
 
         MyLocation myloc = new MyLocation(0,0);
+        
         locationRelater = new PointRelation(myloc);
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
@@ -111,6 +115,8 @@ public class MainActivity extends AppCompatActivity {
         legendText = (TextView) findViewById(R.id.yellowlegendtext);
 
         updateSpecificCircle(locName,locLat,locLon,circle,legendCircle,legendText);
+
+        solveOverlap();
     }
 
     private void updateSpecificCircle(String locName, String locLat, String locLon, ImageView circle, ImageView legendCircle, TextView legendText) {
@@ -124,6 +130,7 @@ public class MainActivity extends AppCompatActivity {
                 legendCircle.setVisibility(View.VISIBLE);
                 legendText.setVisibility(View.VISIBLE);
                 circle.setVisibility(View.VISIBLE);
+                circle.bringToFront();
             }
         } else {
             legendCircle.setVisibility(View.INVISIBLE);
@@ -132,11 +139,82 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
     @Override
     protected void onPause() {
         super.onPause();
         orientationService.unregisterSensorListeners();
     }
+
+    private void solveOverlap(){
+        final float scale = this.getResources().getDisplayMetrics().density;
+        Log.i("overlap", "scale: " + scale);
+        ImageView circleOne = findViewById(R.id.redImage);
+        ImageView circleTwo = findViewById(R.id.blueImage);
+        ImageView circleThree = findViewById(R.id.yellowImage);
+        boolean overlay12 = checkAngleOverlap(circleOne,circleTwo);
+        boolean overlay23 = checkAngleOverlap(circleTwo,circleThree);
+        boolean overlay31 = checkAngleOverlap(circleThree,circleOne);
+        Log.i("overlap", "overlay12: " + overlay12);
+        Log.i("overlap", "overlay23: " + overlay23);
+        Log.i("overlap", "overlay31: " + overlay31);
+        if ((overlay12 && (overlay23 || overlay31)) || (overlay23 && overlay31)){
+            setCircleRadius(circleOne, (int)(360 + 0.5f));
+            setCircleRadius(circleTwo, (int)(410 + 0.5f));
+            setCircleRadius(circleThree, (int)(460 + 0.5f));
+            setCircleSize(circleOne, (int)(50 + 0.5f));
+            setCircleSize(circleTwo, (int)(50 + 0.5f));
+            setCircleSize(circleThree, (int)(50 + 0.5f));
+        } else if (overlay12) {
+            setCircleRadius(circleOne, (int)(360 + 0.5f));
+            setCircleRadius(circleTwo, (int)(410 + 0.5f));
+            setCircleSize(circleOne, (int)(50 + 0.5f));
+            setCircleSize(circleTwo, (int)(50 + 0.5f));
+        } else if (overlay23) {
+            setCircleRadius(circleTwo, (int)(360 + 0.5f));
+            setCircleRadius(circleThree, (int)(410 + 0.5f));
+            setCircleSize(circleTwo, (int)(50 + 0.5f));
+            setCircleSize(circleThree, (int)(50 + 0.5f));
+        } else if (overlay31) {
+            setCircleRadius(circleOne, (int)(360 + 0.5f));
+            setCircleRadius(circleThree, (int)(410 + 0.5f));
+            setCircleSize(circleOne, (int)(50 + 0.5f));
+            setCircleSize(circleThree, (int)(50 + 0.5f));
+        }else{
+            setCircleRadius(circleOne, (int)(410 + 0.5f));
+            setCircleRadius(circleTwo, (int)(410 + 0.5f));
+            setCircleRadius(circleThree, (int)(410 + 0.5f));
+            setCircleSize(circleOne, (int)(50 + 0.5f));
+            setCircleSize(circleTwo, (int)(50 + 0.5f));
+            setCircleSize(circleThree, (int)(50 + 0.5f));
+
+        }
+    }
+    private boolean checkAngleOverlap(ImageView circleOne, ImageView circleTwo){
+        ConstraintLayout.LayoutParams layoutParamsOne = (ConstraintLayout.LayoutParams) circleOne.getLayoutParams();
+        ConstraintLayout.LayoutParams layoutParamsTwo = (ConstraintLayout.LayoutParams) circleTwo.getLayoutParams();
+//        Log.i("overlap", "Angle diff: " + Math.abs(layoutParamsOne.circleAngle-layoutParamsTwo.circleAngle));
+//        return false;
+        return Math.abs(layoutParamsOne.circleAngle-layoutParamsTwo.circleAngle) < 10;
+    }
+    private void setCircleRadius(ImageView circle, int radius) {
+        ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) circle.getLayoutParams();
+        layoutParams.circleRadius = radius;
+        circle.setLayoutParams(layoutParams);
+    }
+
+    private void setCircleSize(ImageView circle, int size) {
+        ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) circle.getLayoutParams();
+        layoutParams.width = size;
+        layoutParams.height = size;
+        circle.setLayoutParams(layoutParams);
+    }
+
+    public MyLocation getLocation(){
+        return myloc;
+    }
+
+
 
     @Override
     protected void onResume() {
