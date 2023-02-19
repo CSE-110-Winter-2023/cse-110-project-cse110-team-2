@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.MutableLiveData;
 
 import android.Manifest;
 import android.content.Intent;
@@ -216,21 +217,35 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        SharedPreferences preferences = getSharedPreferences("IDvalue", 0);
+        String heading_string = preferences.getString("heading", "N/A");
+        if (heading_string != "N/A") {
+
+            float heading_float = Float.parseFloat(heading_string);
+            preferences.edit().remove("heading").commit();
+
+            MutableLiveData<Float> heading_data = new MutableLiveData<Float>();
+            heading_data.postValue(heading_float);
+
+            orientationService.setMockOrientationSource(heading_data);
+        }
+
+
         compassUpdate();
     }
 
     public void onNewLocationBtnClicked(View view) {
         Intent intent = new Intent(this, InputLocation.class);
 
-        SharedPreferences preferences = getSharedPreferences("IDvalue", 0);
-        String locationThreeName = preferences.getString("locationThreeName", "N/A");
-
-        Log.i("Location 3", locationThreeName);
-        if (locationThreeName != "N/A") {
-            Utilities.showAlert(this, "You cannot save any more locations");
-        } else {
-            startActivity(intent);
-        }
+//        SharedPreferences preferences = getSharedPreferences("IDvalue", 0);
+//        String locationThreeName = preferences.getString("locationThreeName", "N/A");
+//
+//        Log.i("Location 3", locationThreeName);
+//        if (locationThreeName != "N/A") {
+//            Utilities.showAlert(this, "You cannot save any more locations");
+//        } else {
+        startActivity(intent);
+//        }
 
     }
 }

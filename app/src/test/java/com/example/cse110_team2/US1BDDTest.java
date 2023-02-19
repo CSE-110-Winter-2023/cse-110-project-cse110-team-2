@@ -19,7 +19,7 @@ import android.widget.TextView;
 public class US1BDDTest {
 
     @Test
-    public void us1_bdd_save_loc() {
+    public void us1_bdd_save_loc()   {
         // Set up activities
         ActivityScenario<MainActivity> scenarioLaunch = ActivityScenario.launch(MainActivity.class);
 
