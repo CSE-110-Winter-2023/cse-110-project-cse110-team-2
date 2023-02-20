@@ -39,6 +39,7 @@ public class InputLocation extends AppCompatActivity {
         TextView newHeading = (TextView) findViewById(R.id.heading_text);
         String heading = newHeading.getText().toString();
         editor.putString("heading", heading);
+        editor.apply();
         finish();
 
     }
