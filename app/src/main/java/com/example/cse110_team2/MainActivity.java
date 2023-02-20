@@ -265,13 +265,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-        orientationService.unregisterSensorListeners();
-    }
-
-
-    @Override
     protected void onResume() {
         super.onResume();
         orientationService = OrientationService.singleton(MainActivity.this);
