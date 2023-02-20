@@ -147,6 +147,7 @@ public class MainActivity extends AppCompatActivity {
                 legendCircle.setVisibility(View.VISIBLE);
                 legendText.setVisibility(View.VISIBLE);
                 circle.setVisibility(View.VISIBLE);
+                circle.bringToFront();
             }
         } else {
             legendCircle.setVisibility(View.INVISIBLE);
@@ -248,6 +249,15 @@ public class MainActivity extends AppCompatActivity {
 
     public MyLocation getLocation() {
         return myloc;
+    }
+
+    public void setOrientationMock(MutableLiveData<Float> ld) {
+        orientationService.setMockOrientationSource(ld);
+    }
+
+    public void mockCompassUpdate() {
+        float az = this.orientationService.getOrientation().getValue();
+        this.compassUpdate(az);
     }
 
     @Override
