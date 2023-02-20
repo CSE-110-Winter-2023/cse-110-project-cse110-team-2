@@ -25,7 +25,7 @@ public class OrientationService implements SensorEventListener {
         this.registerSensorListeners();
     }
 
-    private void registerSensorListeners() {
+    public void registerSensorListeners() {
         //registers both accelerometer and magnetometer
         sensorManager.registerListener(this,
                 sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),

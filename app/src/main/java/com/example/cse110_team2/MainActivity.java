@@ -270,7 +270,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        compassUpdate(orientationService.getOrientation().getValue());
+        orientationService = OrientationService.singleton(MainActivity.this);
+        orientationService.registerSensorListeners();
+        compassUpdate(0.0F);
     }
 
     public void onNewLocationBtnClicked(View view) {
