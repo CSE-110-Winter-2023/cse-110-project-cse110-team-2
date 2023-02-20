@@ -2,6 +2,7 @@ package com.example.cse110_team2;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
@@ -18,8 +19,28 @@ public class InputLocation extends AppCompatActivity {
 
 
     public void onLocationSaveBtnClicked(View view) {
-        saveLocation();
+
+        SharedPreferences preferences = getSharedPreferences("IDvalue", 0);
+        String locationThreeName = preferences.getString("locationThreeName", "N/A");
+
+        Log.i("Location 3", locationThreeName);
+        if (locationThreeName != "N/A") {
+            Utilities.showAlert(this, "You cannot save any more locations");
+        } else {
+            saveLocation();
+            finish();
+        }
+
+    }
+
+    public void onHeadingSaveBtnClicked(View view){
+        SharedPreferences preferences = getSharedPreferences("IDvalue", 0);
+        SharedPreferences.Editor editor = preferences.edit();
+        TextView newHeading = (TextView) findViewById(R.id.heading_text);
+        String heading = newHeading.getText().toString();
+        editor.putString("heading", heading);
         finish();
+
     }
 
     public void saveLocation(){
