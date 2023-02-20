@@ -225,7 +225,7 @@ public class MainActivity extends AppCompatActivity {
             preferences.edit().remove("heading").commit();
 
             MutableLiveData<Float> heading_data = new MutableLiveData<Float>();
-            heading_data.postValue(heading_float);
+            heading_data.setValue(heading_float);
 
             orientationService.setMockOrientationSource(heading_data);
         }
