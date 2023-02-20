@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 
 import java.util.Optional;
+import java.lang.Math;
 
 public class Utilities {
 
@@ -31,6 +32,10 @@ public class Utilities {
 
         AlertDialog alertDialog = alertBuilder.create();
         alertDialog.show();
+    }
+
+    public static double radToDeg(double rads) {
+        return Math.toDegrees(rads);
     }
 
 }
