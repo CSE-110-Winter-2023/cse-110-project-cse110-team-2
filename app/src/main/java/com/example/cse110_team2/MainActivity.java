@@ -284,9 +284,8 @@ public class MainActivity extends AppCompatActivity {
 
             orientationService.setMockOrientationSource(heading_data);
         }
-
-
-        compassUpdate(0.0F);
+        Log.d("type",String.valueOf(orientationService.getOrientation().getValue()));
+        compassUpdate(orientationService.getOrientation().getValue()*(float)Math.PI/180);
     }
 
     public void onNewLocationBtnClicked(View view) {
