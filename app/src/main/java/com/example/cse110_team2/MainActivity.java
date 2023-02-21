@@ -276,7 +276,7 @@ public class MainActivity extends AppCompatActivity {
         String heading_string = preferences.getString("heading", "N/A");
         if (heading_string != "N/A") {
 
-            float heading_float = Float.parseFloat(heading_string);
+            float heading_float = Float.parseFloat(heading_string)*(float)Math.PI/180;
             preferences.edit().remove("heading").commit();
 
             MutableLiveData<Float> heading_data = new MutableLiveData<Float>();
@@ -285,7 +285,7 @@ public class MainActivity extends AppCompatActivity {
             orientationService.setMockOrientationSource(heading_data);
         }
         Log.d("type",String.valueOf(orientationService.getOrientation().getValue()));
-        compassUpdate(orientationService.getOrientation().getValue()*(float)Math.PI/180);
+        compassUpdate(orientationService.getOrientation().getValue());
     }
 
     public void onNewLocationBtnClicked(View view) {
