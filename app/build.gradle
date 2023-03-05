@@ -4,7 +4,7 @@ plugins {
 
 android {
     namespace 'com.example.cse110_team2'
-    compileSdk 32
+    compileSdk 33
 
     defaultConfig {
         applicationId "com.example.cse110_team2"
@@ -23,8 +23,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
     testOptions {
         unitTests {
@@ -44,4 +44,15 @@ dependencies {
     testImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+
+    def gson_version = "2.10.1"
+    implementation "com.google.code.gson:gson:$gson_version"
+
+    def room_version = "2.5.0"
+    implementation "androidx.room:room-runtime:$room_version"
+    annotationProcessor "androidx.room:room-compiler:$room_version"
+
+    def okhttp_version = "4.10.0"
+    implementation "com.squareup.okhttp3:okhttp:$okhttp_version"
+
 }
