@@ -23,7 +23,7 @@ public class InputNameActivity extends AppCompatActivity {
         SharedPreferences preferences = getSharedPreferences("IDvalue", 0);
         SharedPreferences.Editor editor = preferences.edit();
         String publicID = UUID.randomUUID().toString();
-        String privateID = UUID.randomUUID().toString();
+        String  privateID = UUID.randomUUID().toString();
 
         TextView name = (TextView) findViewById(R.id.name);
         String newName = name.getText().toString();
@@ -44,7 +44,6 @@ public class InputNameActivity extends AppCompatActivity {
             compassAPI.addUserAsynch(user);
             finish();
         }
-
     }
 
 }

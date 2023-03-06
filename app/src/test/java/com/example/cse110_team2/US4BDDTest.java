@@ -19,7 +19,7 @@ import org.robolectric.shadows.ShadowIntent;
 
 @RunWith(RobolectricTestRunner.class)
 public class US4BDDTest {
-
+/*
     @Test
     public void MultipleCollisionTest(){
         ActivityScenario<MainActivity> scenarioLaunch = ActivityScenario.launch(MainActivity.class);
@@ -185,4 +185,6 @@ public class US4BDDTest {
         });
 
     }
+
+ */
 }

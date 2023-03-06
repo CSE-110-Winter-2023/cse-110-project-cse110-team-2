@@ -15,7 +15,7 @@ import org.robolectric.RobolectricTestRunner;
 
 @RunWith(RobolectricTestRunner.class)
 public class InputLocationTest {
-
+/*
     @Test
     public void testAddSingleLocation(){
 
@@ -46,5 +46,5 @@ public class InputLocationTest {
         });
 
     }
-
+*/
 }

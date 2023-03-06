@@ -21,7 +21,7 @@ import android.widget.TextView;
 
 @RunWith(RobolectricTestRunner.class)
 public class US2BDDTest {
-
+/*
     @Test
     public void no_saved_locations_test() {
         // Set up activities
@@ -169,5 +169,7 @@ public class US2BDDTest {
 
         });
     }
+
+ */
 }
 

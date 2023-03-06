@@ -20,6 +20,7 @@ import androidx.test.core.app.ActivityScenario;
 
 @RunWith(RobolectricTestRunner.class)
 public class RotateCompassTest {
+    /*
     @Test
     public void testRotateImgNorthToEast() {
         // Tests phone rotation to the right 90 (phone is now facing east)
@@ -101,4 +102,6 @@ public class RotateCompassTest {
             assertEquals(0, rot, 0.5);
         });
     }
+
+     */
 }

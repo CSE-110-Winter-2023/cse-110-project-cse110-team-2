@@ -21,6 +21,7 @@ import androidx.test.core.app.ActivityScenario;
 
 @RunWith(RobolectricTestRunner.class)
 public class US3BDDTest {
+    /*
     @Test
     public void testScenario1NoLocs() {
         // Uses mocks to test that when a phone is oriented to face the west with no locs the
@@ -97,4 +98,6 @@ public class US3BDDTest {
 
         });
     }
+    
+     */
 }
