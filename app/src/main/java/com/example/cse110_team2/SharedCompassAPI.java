@@ -4,6 +4,12 @@ import android.util.Log;
 
 import androidx.annotation.AnyThread;
 import androidx.annotation.WorkerThread;
+
+import com.google.gson.JsonObject;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
@@ -58,22 +64,62 @@ public class SharedCompassAPI {
     }
 
     @WorkerThread
-    public void addUser(User user){
-        RequestBody body = RequestBody.create(user.toJSON(), JSON);
+    public void publishUser(User user) {
+
+        JSONObject obj = new JSONObject();
+        try {
+            obj.put("private_code", user.private_code);
+            obj.put("is_listed_publicly", user.is_listed_publicly);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        RequestBody body = RequestBody.create(obj.toString(), JSON);
+        Log.i("publish obj", String.valueOf(obj));
+        Request request = new Request.Builder()
+                .url("https://socialcompass.goto.ucsd.edu/location/" + user.uid)
+                .method("PATCH", body)
+                .build();
+
+        try (Response response = client.newCall(request).execute()) {
+            assert response.body()!=null;
+            var result = response.body().string();
+            Log.i("publish result", result);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @WorkerThread
+    public void putUser(User user)  {
+        JSONObject json = null;
+        try {
+            json = new JSONObject(user.toJSON());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        json.remove("public_code");
+        json.remove("is_listed_publicly");
+
+        RequestBody body = RequestBody.create(json.toString(), JSON);
 
         Request request = new Request.Builder()
                 .url("https://socialcompass.goto.ucsd.edu/location/" + user.uid)
                 .method("PUT", body)
                 .build();
 
+        Log.i("push object:", user.toJSON());
         try (Response response = client.newCall(request).execute()) {
-            var result = response.body().toString();
-            Log.i("push result",   result);
+            assert response.body()!=null;
+            var result = response.body().string();
+            Log.i("push result", result);
 
         } catch (IOException e) {
             e.printStackTrace();
         }
 
+        publishUser(user);
     }
 
     @WorkerThread
@@ -96,7 +142,7 @@ public class SharedCompassAPI {
     }
 
     @AnyThread
-    public User getUserAsynch(String uid){
+    public User getUserAsync(String uid){
         var executor = Executors.newSingleThreadExecutor();
         var future = executor.submit(() -> getUser(uid));
 
@@ -113,14 +159,21 @@ public class SharedCompassAPI {
     }
 
     @AnyThread
-    public void addUserAsynch(User user){
+    public void putUserAsync(User user){
         var executor = Executors.newSingleThreadExecutor();
-        var future = executor.submit(() -> addUser(user));
+        var future = executor.submit(() -> putUser(user));
 
     }
 
     @AnyThread
-    public void updateUserAsynch(User user){
+    public void publishUserAsync(User user){
+        var executor = Executors.newSingleThreadExecutor();
+        var future = executor.submit(() -> publishUser(user));
+
+    }
+
+    @AnyThread
+    public void updateUserAsync(User user){
         var executor = Executors.newSingleThreadExecutor();
         var future = executor.submit(() -> updateUser(user));
 

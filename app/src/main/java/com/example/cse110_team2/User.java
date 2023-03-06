@@ -27,6 +27,9 @@ public class User {
     @SerializedName("private_code")
     public String private_code;
 
+    @SerializedName("is_listed_publicly")
+    public boolean is_listed_publicly = true;
+
 //    @SerializedName("updated_at")
 //    public long updatedAt = 0;
 
@@ -38,8 +41,8 @@ public class User {
        this.private_code = private_code;
     }
 
-    public static User createUser(@NonNull String name){
-        return new User(name,UUID.randomUUID().toString(), -1, -1, UUID.randomUUID().toString());
+    public static User createUser(@NonNull String name,String publicID,String privateID){
+        return new User(name,publicID, -1, -1, privateID);
     }
 
     public static User fromJSON(String json) {

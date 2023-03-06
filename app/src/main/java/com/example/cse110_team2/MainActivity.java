@@ -40,9 +40,19 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        firstLocUpdate = false;
-        //TextView lon= findViewById(R.id.Lon);
-        //TextView lat= findViewById(R.id.Lat);
+        SharedPreferences preferences = getSharedPreferences("IDvalue", 0);
+        String name = preferences.getString("user", "N/A");
+        if (name == "N/A") {
+            Log.d("debug", name);
+            Intent intent = new Intent(this, InputNameActivity.class);
+            startActivity(intent);
+        }
+
+
+        //firstLocUpdate = false;
+
+/*
+
 
         orientationService = OrientationService.singleton(MainActivity.this);
         orientationService.getOrientation().observe(this, azimuth -> {
@@ -156,23 +166,23 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
+*/
     /**
      * Rotates the selected image view about a certain angle based on heading.
      * @param img The image view compass to rotate
      * @param az Azimuth from current heading
-     */
+
     public void rotateImg(ImageView img, Float az) {
         if (az == null) { az = 0.0F; }
         double azDeg = Utilities.radToDeg(az);
         img.setRotation((float) -(azDeg));
     }
-
+     */
     /**
      * Rotates location circles
      * @param img Location circle to rotate
      * @param az Azimuth from current heading
-     */
+
     public void rotateLoc(ImageView img, Float az) {
         if (az == null) { return; }
         double azDeg = Utilities.radToDeg(az);
@@ -301,6 +311,7 @@ public class MainActivity extends AppCompatActivity {
 //        } else {
         startActivity(intent);
 //        }
-
+     */
     }
+
 }
