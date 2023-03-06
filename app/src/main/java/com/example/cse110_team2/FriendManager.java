@@ -35,20 +35,25 @@ public class FriendManager {
     }
 
     public void loadFriendsFromSharedPreferences(SharedPreferences preferences){
-        Gson gson = new Gson();
-        Type type = new TypeToken<List<User>>() {}.getType();
+        SharedCompassAPI api = SharedCompassAPI.provide();
+        String text = preferences.getString("friends", "");
+        friends = new ArrayList<User>(0);
 
-        String json = preferences.getString("friends", "");
-        friends = gson.fromJson(json, type);
+        String [] uids = text.split(",");
 
+        for(int i =0; i < uids.length; i++){
+            friends.add(api.getUserAsync(uids[i]));
+        }
     }
 
     public void saveFriendsToSharedPreferences(SharedPreferences preferences){
-        Gson gson = new Gson();
-        SharedPreferences.Editor editor = preferences.edit();
-        String json = gson.toJson(friends);
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < friends.size(); i++) {
+            sb.append(friends.get(i).uid + ",");
+        }
 
-        editor.putString("friends", json);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString("friends", sb.toString());
         editor.commit();
     }
 
