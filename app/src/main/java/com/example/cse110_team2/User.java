@@ -11,9 +11,8 @@ import java.util.UUID;
 
 public class User {
 
-    @PrimaryKey
-    @SerializedName("public_code")
-    public String uid;
+
+    public transient String uid;
 
     @SerializedName("label")
     public String name;
@@ -26,6 +25,9 @@ public class User {
 
     @SerializedName("private_code")
     public String private_code;
+
+    @SerializedName("is_listed_publicly")
+    public boolean is_listed_publicly = true;
 
 //    @SerializedName("updated_at")
 //    public long updatedAt = 0;

@@ -53,9 +53,9 @@ public class SharedCompassAPI {
 
             assert response.body() != null;
             var body = response.body().string();
-            Log.i("get result",   body);
-            return User.fromJSON(body);
-
+            User user =  User.fromJSON(body);
+            user.uid = uid;
+            return user;
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -64,9 +64,39 @@ public class SharedCompassAPI {
     }
 
     @WorkerThread
-    public void addUser(User user) throws JSONException {
-        JSONObject json = new JSONObject(user.toJSON());
-        json.remove("public_code");
+    public void publishUser(User user) {
+
+        JSONObject obj = new JSONObject();
+        try {
+            obj.put("private_code", user.private_code);
+            obj.put("is_listed_publicly", user.is_listed_publicly);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        RequestBody body = RequestBody.create(obj.toString(), JSON);
+        Request request = new Request.Builder()
+                .url("https://socialcompass.goto.ucsd.edu/location/" + user.uid)
+                .method("PATCH", body)
+                .build();
+
+        try (Response response = client.newCall(request).execute()) {
+            assert response.body()!=null;
+            var result = response.body().string();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @WorkerThread
+    public void putUser(User user)  {
+        JSONObject json = null;
+        try {
+            json = new JSONObject(user.toJSON());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        json.remove("is_listed_publicly");
 
         RequestBody body = RequestBody.create(json.toString(), JSON);
 
@@ -74,20 +104,20 @@ public class SharedCompassAPI {
                 .url("https://socialcompass.goto.ucsd.edu/location/" + user.uid)
                 .method("PUT", body)
                 .build();
-        Log.i("push result", user.toJSON());
+
         try (Response response = client.newCall(request).execute()) {
             assert response.body()!=null;
             var result = response.body().string();
-            Log.i("push result", result);
 
         } catch (IOException e) {
             e.printStackTrace();
         }
 
+        publishUser(user);
     }
 
     @WorkerThread
-    public void updateUser(User user){
+    public void updateUserLocation(User user){
         RequestBody body = RequestBody.create(user.toJSON(), JSON);
 
         Request request = new Request.Builder()
@@ -97,16 +127,38 @@ public class SharedCompassAPI {
 
         try (Response response = client.newCall(request).execute()) {
             var result = response.body().toString();
-            Log.i("patch result",   result);
 
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
 
+    @WorkerThread
+    public void deleteUser(User user) {
+        JSONObject obj = new JSONObject();
+        try {
+            obj.put("private_code", user.private_code);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        RequestBody body = RequestBody.create(obj.toString(), JSON);
+        Request request = new Request.Builder()
+                .url("https://socialcompass.goto.ucsd.edu/location/" + user.uid)
+                .method("DELETE", body)
+                .build();
+
+        try (Response response = client.newCall(request).execute()) {
+            assert response.body()!=null;
+            var result = response.body().string();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @AnyThread
-    public User getUserAsynch(String uid){
+    public User getUserAsync(String uid){
         var executor = Executors.newSingleThreadExecutor();
         var future = executor.submit(() -> getUser(uid));
 
@@ -123,23 +175,30 @@ public class SharedCompassAPI {
     }
 
     @AnyThread
-    public void addUserAsynch(User user){
+    public void putUserAsync(User user){
         var executor = Executors.newSingleThreadExecutor();
-        var future = executor.submit(() -> {
-            try {
-                addUser(user);
-            } catch (JSONException e) {
-                throw new RuntimeException(e);
-            }
-        });
+        var future = executor.submit(() -> putUser(user));
 
     }
 
     @AnyThread
-    public void updateUserAsynch(User user){
+    public void publishUserAsync(User user){
         var executor = Executors.newSingleThreadExecutor();
-        var future = executor.submit(() -> updateUser(user));
+        var future = executor.submit(() -> publishUser(user));
 
+    }
+
+    @AnyThread
+    public void updateUserLocationAsync(User user){
+        var executor = Executors.newSingleThreadExecutor();
+        var future = executor.submit(() -> updateUserLocation(user));
+
+    }
+
+    @AnyThread
+    public void deleteUserAsync(User user){
+        var executor = Executors.newSingleThreadExecutor();
+        var future = executor.submit(() -> deleteUser(user));
     }
 
 }
