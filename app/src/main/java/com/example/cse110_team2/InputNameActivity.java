@@ -41,7 +41,7 @@ public class InputNameActivity extends AppCompatActivity {
             startActivity(intent);
 
             SharedCompassAPI compassAPI = new SharedCompassAPI();
-            compassAPI.addUserAsynch(user);
+            compassAPI.putUserAsync(user);
             finish();
         }
 

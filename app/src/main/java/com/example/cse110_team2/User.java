@@ -27,6 +27,9 @@ public class User {
     @SerializedName("private_code")
     public String private_code;
 
+    @SerializedName("is_listed_publicly")
+    public boolean is_listed_publicly = true;
+
 //    @SerializedName("updated_at")
 //    public long updatedAt = 0;
 
