@@ -1,4 +1,4 @@
-package com.example.cse110_team2;
+package com.example.cse110_team2.BDDTests;
 
 import static org.junit.Assert.assertEquals;
 import static org.robolectric.Shadows.shadowOf;
@@ -17,6 +17,10 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.shadows.ShadowIntent;
 
 import static org.junit.Assert.*;
+
+import com.example.cse110_team2.AddFriendsActivity;
+import com.example.cse110_team2.InputNameActivity;
+import com.example.cse110_team2.R;
 
 
 @RunWith(RobolectricTestRunner.class)
