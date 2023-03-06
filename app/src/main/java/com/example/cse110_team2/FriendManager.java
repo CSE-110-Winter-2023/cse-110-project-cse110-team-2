@@ -16,7 +16,7 @@ public class FriendManager {
     private ArrayList<User> friends;
 
     public FriendManager(){
-        friends = new ArrayList<User>();
+        friends = new ArrayList<User>(0);
     }
 
     public static FriendManager provide(){
@@ -28,6 +28,10 @@ public class FriendManager {
 
     public ArrayList<User> getFriends(){
         return friends;
+    }
+
+    public void addFriend(User user){
+        friends.add(user);
     }
 
     public void loadFriendsFromSharedPreferences(SharedPreferences preferences){
@@ -46,6 +50,12 @@ public class FriendManager {
 
         editor.putString("friends", json);
         editor.commit();
+    }
 
+    public void updateFriendLocations(){
+        SharedCompassAPI api = SharedCompassAPI.provide();
+        for(int i = 0; i < friends.size(); i++){
+            friends.set(i, api.getUserAsync(friends.get(i).uid));
+        }
     }
 }
