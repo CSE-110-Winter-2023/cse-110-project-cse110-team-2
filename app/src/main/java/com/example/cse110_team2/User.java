@@ -38,8 +38,8 @@ public class User {
        this.private_code = private_code;
     }
 
-    public static User createUser(@NonNull String name){
-        return new User(name,UUID.randomUUID().toString(), -1, -1, UUID.randomUUID().toString());
+    public static User createUser(@NonNull String name,String publicID,String privateID){
+        return new User(name,publicID, -1, -1, privateID);
     }
 
     public static User fromJSON(String json) {

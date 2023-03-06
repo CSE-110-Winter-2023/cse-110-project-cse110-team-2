@@ -4,6 +4,12 @@ import android.util.Log;
 
 import androidx.annotation.AnyThread;
 import androidx.annotation.WorkerThread;
+
+import com.google.gson.JsonObject;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
@@ -58,17 +64,21 @@ public class SharedCompassAPI {
     }
 
     @WorkerThread
-    public void addUser(User user){
-        RequestBody body = RequestBody.create(user.toJSON(), JSON);
+    public void addUser(User user) throws JSONException {
+        JSONObject json = new JSONObject(user.toJSON());
+        json.remove("public_code");
+
+        RequestBody body = RequestBody.create(json.toString(), JSON);
 
         Request request = new Request.Builder()
                 .url("https://socialcompass.goto.ucsd.edu/location/" + user.uid)
                 .method("PUT", body)
                 .build();
-
+        Log.i("push result", user.toJSON());
         try (Response response = client.newCall(request).execute()) {
-            var result = response.body().toString();
-            Log.i("push result",   result);
+            assert response.body()!=null;
+            var result = response.body().string();
+            Log.i("push result", result);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -115,7 +125,13 @@ public class SharedCompassAPI {
     @AnyThread
     public void addUserAsynch(User user){
         var executor = Executors.newSingleThreadExecutor();
-        var future = executor.submit(() -> addUser(user));
+        var future = executor.submit(() -> {
+            try {
+                addUser(user);
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
+        });
 
     }
 
