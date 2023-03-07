@@ -35,7 +35,7 @@ public class FriendManager {
         // check if friend already exists
         boolean existsFlag = false;
         for (User us : this.getFriends()) {
-            if (us.uid == user.uid) { existsFlag = true; }
+            if (us.uid.equals(user.uid)) { existsFlag = true; }
         }
 
         if (existsFlag == false) { friends.add(user); }
