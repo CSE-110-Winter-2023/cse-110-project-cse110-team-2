@@ -2,8 +2,10 @@ package com.example.cse110_team2;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.TextView;
 
 public class AddFriendsActivity extends AppCompatActivity {
@@ -18,8 +20,18 @@ public class AddFriendsActivity extends AppCompatActivity {
         String publicID = preferences.getString("publicID","NA");
         id.setText("ID: "+ publicID);
     }
-    // TODO: function to add friends
-    public void AddBtnClicked(){
+
+    SharedCompassAPI api= new SharedCompassAPI();
+    public void onAddBtnClicked(View view){
+        TextView id = (TextView)findViewById(R.id.friendID);
+        User friend = api.getUserAsync(id.getText().toString());
+
+        FriendManager.addFriend(friend);
+
+
+
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
         finish();
     }
 }

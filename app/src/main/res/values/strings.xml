@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">cse110-team2</string>
+    <string name="uid">UID</string>
+    <string name="add_friends">Add Friends</string>
+    <string name="add">ADD</string>
+    <string name="your_id">Your ID:</string>
 </resources>

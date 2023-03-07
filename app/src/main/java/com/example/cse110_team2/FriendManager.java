@@ -13,10 +13,10 @@ public class FriendManager {
 
     public volatile static FriendManager instance = null;
 
-    private ArrayList<User> friends;
+    private static ArrayList<User> friends;
 
     public FriendManager(){
-        friends = new ArrayList<User>();
+        friends = new ArrayList<User>(0);
     }
 
     public static FriendManager provide(){
@@ -30,22 +30,37 @@ public class FriendManager {
         return friends;
     }
 
+    public static void addFriend(User user){
+        friends.add(user);
+    }
+
     public void loadFriendsFromSharedPreferences(SharedPreferences preferences){
-        Gson gson = new Gson();
-        Type type = new TypeToken<List<User>>() {}.getType();
+        SharedCompassAPI api = SharedCompassAPI.provide();
+        String text = preferences.getString("friends", "");
+        friends = new ArrayList<User>(0);
 
-        String json = preferences.getString("friends", "");
-        friends = gson.fromJson(json, type);
+        String [] uids = text.split(",");
 
+        for(int i =0; i < uids.length; i++){
+            friends.add(api.getUserAsync(uids[i]));
+        }
     }
 
     public void saveFriendsToSharedPreferences(SharedPreferences preferences){
-        Gson gson = new Gson();
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < friends.size(); i++) {
+            sb.append(friends.get(i).uid + ",");
+        }
+
         SharedPreferences.Editor editor = preferences.edit();
-        String json = gson.toJson(friends);
-
-        editor.putString("friends", json);
+        editor.putString("friends", sb.toString());
         editor.commit();
+    }
 
+    public void updateFriendLocations(){
+        SharedCompassAPI api = SharedCompassAPI.provide();
+        for(int i = 0; i < friends.size(); i++){
+            friends.set(i, api.getUserAsync(friends.get(i).uid));
+        }
     }
 }

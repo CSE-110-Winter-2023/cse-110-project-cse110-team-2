@@ -312,6 +312,14 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
 //        }
      */
+
+
     }
 
+
+    public void onAddFriendClicked(View view) {
+        Intent intent = new Intent(this, AddFriendsActivity.class);
+        startActivity(intent);
+
+    }
 }
