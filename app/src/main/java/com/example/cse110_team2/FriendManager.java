@@ -13,7 +13,7 @@ public class FriendManager {
 
     public volatile static FriendManager instance = null;
 
-    private static ArrayList<User> friends;
+    private ArrayList<User> friends;
 
     public FriendManager(){
         friends = new ArrayList<User>(0);
@@ -30,7 +30,7 @@ public class FriendManager {
         return friends;
     }
 
-    public static void addFriend(User user){
+    public void addFriend(User user){
         friends.add(user);
     }
 

@@ -167,6 +167,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 */
+
     /**
      * Rotates the selected image view about a certain angle based on heading.
      * @param img The image view compass to rotate

@@ -9,6 +9,8 @@ import android.view.View;
 import android.widget.TextView;
 
 public class AddFriendsActivity extends AppCompatActivity {
+    private FriendManager friendManager;
+    private SharedCompassAPI api;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,14 +21,17 @@ public class AddFriendsActivity extends AppCompatActivity {
         SharedPreferences preferences = getSharedPreferences("IDvalue", 0);
         String publicID = preferences.getString("publicID","NA");
         id.setText("ID: "+ publicID);
+
+        friendManager = FriendManager.provide();
+        api = new SharedCompassAPI();
     }
 
-    SharedCompassAPI api= new SharedCompassAPI();
+
     public void onAddBtnClicked(View view){
         TextView id = (TextView)findViewById(R.id.friendID);
         User friend = api.getUserAsync(id.getText().toString());
 
-        FriendManager.addFriend(friend);
+        friendManager.addFriend(friend);
 
 
 
