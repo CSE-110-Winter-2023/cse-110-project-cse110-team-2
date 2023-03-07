@@ -87,6 +87,14 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
+
+    public FriendManager getFriendManager() {
+        return this.friendManager;
+    }
+
+    public void mockAddFriend(User user) {
+        this.friendManager.addFriend(user);
+    }
         //firstLocUpdate = false;
 
 
