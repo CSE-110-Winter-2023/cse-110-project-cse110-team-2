@@ -90,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
         //firstLocUpdate = false;
 
 
+/*
 //
 //
 //        orientationService = OrientationService.singleton(MainActivity.this);
@@ -158,6 +159,90 @@ public class MainActivity extends AppCompatActivity {
 //    }
 
 
+<<<<<<< HEAD
+        SharedPreferences preferences = getSharedPreferences("IDvalue", 0);
+        String locName = preferences.getString("locationOneName", "N/A");
+        if (locName == "N/A") {
+            Intent intent = new Intent(this, InputLocation.class);
+            startActivity(intent);
+        }
+    }
+
+    private void compassUpdate(Float az) {
+        SharedPreferences preferences = getSharedPreferences("IDvalue", 0);
+        String locName;
+        String locLat;
+        String locLon;
+        ImageView circle;
+        ImageView legendCircle;
+        TextView legendText;
+
+        ImageView compassCircle;
+
+//        First Point
+        locName = preferences.getString("locationOneName", "N/A");
+        locLat = preferences.getString("locationOneLat", "N/A");
+        locLon = preferences.getString("locationOneLon", "N/A");
+        circle = (ImageView) findViewById(R.id.redImage);
+        legendCircle = (ImageView) findViewById(R.id.redlegendcircle);
+        legendText = (TextView) findViewById(R.id.redlegendtext);
+
+        updateSpecificCircle(locName, locLat, locLon, circle, legendCircle, legendText);
+        rotateLoc(circle, az);
+
+        //        Second Point
+        locName = preferences.getString("locationTwoName", "N/A");
+        locLat = preferences.getString("locationTwoLat", "N/A");
+        locLon = preferences.getString("locationTwoLon", "N/A");
+        circle = (ImageView) findViewById(R.id.blueImage);
+        legendCircle = (ImageView) findViewById(R.id.bluelegendcircle);
+        legendText = (TextView) findViewById(R.id.bluelegendtext);
+
+        updateSpecificCircle(locName, locLat, locLon, circle, legendCircle, legendText);
+        rotateLoc(circle, az);
+
+        //        Third Point
+        locName = preferences.getString("locationThreeName", "N/A");
+        locLat = preferences.getString("locationThreeLat", "N/A");
+        locLon = preferences.getString("locationThreeLon", "N/A");
+        circle = (ImageView) findViewById(R.id.yellowImage);
+        legendCircle = (ImageView) findViewById(R.id.yellowlegendcircle);
+        legendText = (TextView) findViewById(R.id.yellowlegendtext);
+
+        updateSpecificCircle(locName, locLat, locLon, circle, legendCircle, legendText);
+        rotateLoc(circle, az);
+
+        // Update compass overlay
+        compassCircle = (ImageView) findViewById(R.id.compassImage);
+        rotateImg(compassCircle, az);
+
+        solveOverlap();
+
+    }
+
+    private void updateSpecificCircle(String locName, String locLat, String locLon, ImageView circle, ImageView legendCircle, TextView legendText) {
+        if (locName != "N/A") {
+            Double newAngle = locationRelater.angleCalculation(Double.parseDouble(locLat), Double.parseDouble(locLon));
+            legendText.setText(locName);
+            ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) circle.getLayoutParams();
+            layoutParams.circleAngle = newAngle.floatValue();
+            circle.setLayoutParams(layoutParams);
+            if (firstLocUpdate) {
+                legendCircle.setVisibility(View.VISIBLE);
+                legendText.setVisibility(View.VISIBLE);
+                circle.setVisibility(View.VISIBLE);
+                circle.bringToFront();
+            }
+        } else {
+            legendCircle.setVisibility(View.INVISIBLE);
+            legendText.setVisibility(View.INVISIBLE);
+            circle.setVisibility(View.INVISIBLE);
+        }
+    }
+
+*/
+
+/*
     /**
      * Rotates the selected image view about a certain angle based on heading.
      * @param img The image view compass to rotate
@@ -168,7 +253,8 @@ public class MainActivity extends AppCompatActivity {
         double azDeg = Utilities.radToDeg(az);
         img.setRotation((float) -(azDeg));
     }
-     */
+
+
     /**
      * Rotates location circles
      * @param img Location circle to rotate
@@ -303,6 +389,17 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
 //        }
      */
-//    }
 
+
+
+
+
+
+    public void onAddFriendClicked(View view) {
+        Intent intent = new Intent(this, AddFriendsActivity.class);
+        startActivity(intent);
+
+    }
 }
+
+
