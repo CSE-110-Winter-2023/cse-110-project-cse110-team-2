@@ -11,9 +11,8 @@ import java.util.UUID;
 
 public class User {
 
-    @PrimaryKey
-    @SerializedName("public_code")
-    public String uid;
+
+    public transient String uid;
 
     @SerializedName("label")
     public String name;
