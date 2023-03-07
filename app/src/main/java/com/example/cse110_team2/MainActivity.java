@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(this, InputNameActivity.class);
             startActivity(intent);
         }
-        friendManager = new FriendManager();
+        friendManager = FriendManager.provide();
 
 
         var executor = Executors.newSingleThreadScheduledExecutor();
