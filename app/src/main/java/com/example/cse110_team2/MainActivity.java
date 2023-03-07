@@ -90,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
         //firstLocUpdate = false;
 
 
+/*
 //
 //
 //        orientationService = OrientationService.singleton(MainActivity.this);
