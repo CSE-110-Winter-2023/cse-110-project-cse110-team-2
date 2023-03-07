@@ -32,7 +32,13 @@ public class FriendManager {
     }
 
     public void addFriend(User user){
-        friends.add(user);
+        // check if friend already exists
+        boolean existsFlag = false;
+        for (User us : this.getFriends()) {
+            if (us.uid.equals(user.uid)) { existsFlag = true; }
+        }
+
+        if (existsFlag == false) { friends.add(user); }
     }
 
     public void loadFriendsFromSharedPreferences(SharedPreferences preferences){
