@@ -5,6 +5,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.MutableLiveData;
@@ -18,11 +19,13 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
+
 import java.util.ArrayList;
 
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.gson.annotations.SerializedName;
@@ -39,7 +42,11 @@ public class MainActivity extends AppCompatActivity {
     private PointRelation locationRelater;
     private OrientationService orientationService;
     private boolean firstLocUpdate;
+    private int curr_zoom_max;
     private MyLocation myloc;
+    private ImageView iv;
+    private ConstraintLayout layout;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,15 +59,39 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(this, InputNameActivity.class);
             startActivity(intent);
         }
-        friendManager = FriendManager.provide();
 
+        myloc = new MyLocation(0, 0);
+        locationRelater = new PointRelation(myloc);
+        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+//
+        friendManager = FriendManager.provide();
+        layout = (ConstraintLayout)findViewById(R.id.compasslayout);
+//
+        curr_zoom_max = 1;
+
+        Log.d("Printing For time 0:", "Printing1");
 
         var executor = Executors.newSingleThreadScheduledExecutor();
-        ScheduledFuture<?> poller = executor.scheduleAtFixedRate(()->{
+        ScheduledFuture<?> poller = executor.scheduleAtFixedRate(() -> {
             Log.d("Printing For time:", "Printing1");
             friendManager.updateFriendLocations();
             updateFunctions();
         }, 0, 5, TimeUnit.SECONDS);
+
+//        if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+//                ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+//        }
+//        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10, 1, new LocationListener() {
+//            @Override
+//            public void onLocationChanged(@NonNull Location location) {
+//                firstLocUpdate = true;
+//                myloc.setLon(location.getLongitude());
+//                myloc.setLat(location.getLatitude());
+//                //lon.setText("Longitude: " + String.valueOf(myloc.getLon()));
+//                //lat.setText("Latitude: " + String.valueOf(myloc.getLat()));
+//            }
+//        });
 
     }
 
@@ -75,18 +106,69 @@ public class MainActivity extends AppCompatActivity {
         User curr_friend;
         ArrayList<User> friendList = friendManager.getFriends();
         Log.d("CU", "in compass update");
+        displayDotOnEdge((double) curr_zoom_max * 10);
+        curr_zoom_max += 1;
         for (int i = 0; i < friendList.size(); i++) {
 
             curr_friend = friendList.get(i);
             name = curr_friend.name;
             longitude = curr_friend.longitude;
             latitude = curr_friend.latitude;
+            double point_angle = locationRelater.angleCalculation(latitude, longitude);
+            if(locationRelater.distanceCalculation(latitude,longitude) >= curr_zoom_max){
+                displayDotOnEdge(point_angle);
+            }
 
             //TODO: Update friend name here with relative location (longitude and latitude)
 
         }
+    }
+
+    private void displayDotOnEdge(double angle){
+//        ConstraintSet set = new ConstraintSet();
+//
+//        ImageView view = new ImageView(this);
+//        view.setImageResource(R.drawable.redcircle);
+//        view.setId(View.generateViewId());  // cannot set id after add
+//        layout.addView(view,0);
+//        set.clone(layout);
+//        set.connect(view.getId(), ConstraintSet.TOP, layout.getId(), ConstraintSet.TOP, 60);
+//        set.applyTo(layout);
+//        ImageView iv2 = new ImageView(MainActivity.this);
+//        iv2.setImageResource(R.drawable.redcircle);
+//        ConstraintLayout.LayoutParams params = new ConstraintLayout.LayoutParams(200, 200);
+//
+//        // setting the margin in linearlayout
+//        params.setMargins(0, 10, 0, 10);
+//        iv2.setLayoutParams(params);
+//
+//        // adding the image in layout
+//        layout.addView(iv2);
+//        iv.setPadding(0,0,0,20);
+
+//        ConstraintLayout.LayoutParams lp = (ConstraintLayout.LayoutParams) iv.getLayoutParams();
+//        lp.circleRadius = 164;
+//        lp.circleAngle = (float) angle;
+//        lp.width = 24;
+//        lp.height = 24;
+//        iv.setLayoutParams(lp);
+//        iv.setVisibility(View.VISIBLE);
+//        layout.addView(iv);
 
     }
+
+//    private void setCircleRadius(ImageView circle, int radius) {
+//        ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) circle.getLayoutParams();
+//        layoutParams.circleRadius = radius;
+//        circle.setLayoutParams(layoutParams);
+//    }
+//
+//    private void setCircleSize(ImageView circle, int size) {
+//        ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) circle.getLayoutParams();
+//        layoutParams.width = size;
+//        layoutParams.height = size;
+//        circle.setLayoutParams(layoutParams);
+//    }
         //firstLocUpdate = false;
 
 
