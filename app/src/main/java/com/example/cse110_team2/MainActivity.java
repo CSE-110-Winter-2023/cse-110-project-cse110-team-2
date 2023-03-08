@@ -166,6 +166,14 @@ public class MainActivity extends AppCompatActivity {
 //        layoutParams.height = size;
 //        circle.setLayoutParams(layoutParams);
 //    }
+
+    public FriendManager getFriendManager() {
+        return this.friendManager;
+    }
+
+    public void mockAddFriend(User user) {
+        this.friendManager.addFriend(user);
+    }
         //firstLocUpdate = false;
 
 
@@ -238,7 +246,6 @@ public class MainActivity extends AppCompatActivity {
 //    }
 
 
-<<<<<<< HEAD
         SharedPreferences preferences = getSharedPreferences("IDvalue", 0);
         String locName = preferences.getString("locationOneName", "N/A");
         if (locName == "N/A") {
