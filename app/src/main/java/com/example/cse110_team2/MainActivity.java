@@ -5,11 +5,13 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.MutableLiveData;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -18,11 +20,13 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
+
 import java.util.ArrayList;
 
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.gson.annotations.SerializedName;
@@ -33,18 +37,25 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
-
+    private int counter = 0;
+    public static Context context;
     private LocationManager locationManager;
     private FriendManager friendManager;
     private PointRelation locationRelater;
     private OrientationService orientationService;
     private boolean firstLocUpdate;
+    private final int MAX_RADIUS_OFFSET = 70;
+    private int curr_zoom_max;
     private MyLocation myloc;
+    private ImageView iv;
+    private ConstraintLayout layout;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        context = getApplicationContext();
         SharedPreferences preferences = getSharedPreferences("IDvalue", 0);
         String name = preferences.getString("user", "N/A");
         if (name == "N/A") {
@@ -52,15 +63,40 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(this, InputNameActivity.class);
             startActivity(intent);
         }
-        friendManager = FriendManager.provide();
 
+        myloc = new MyLocation(0, 0);
+        locationRelater = new PointRelation(myloc);
+        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+//
+        friendManager = FriendManager.provide();
+        layout = (ConstraintLayout)findViewById(R.id.compasslayout);
+
+
+        curr_zoom_max = 1;
+
+        Log.d("Printing For time 0:", "Printing1");
 
         var executor = Executors.newSingleThreadScheduledExecutor();
-        ScheduledFuture<?> poller = executor.scheduleAtFixedRate(()->{
+        ScheduledFuture<?> poller = executor.scheduleAtFixedRate(() -> {
             Log.d("Printing For time:", "Printing1");
             friendManager.updateFriendLocations();
             updateFunctions();
         }, 0, 5, TimeUnit.SECONDS);
+
+        if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+        }
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10, 1, new LocationListener() {
+            @Override
+            public void onLocationChanged(@NonNull Location location) {
+                firstLocUpdate = true;
+                myloc.setLon(location.getLongitude());
+                myloc.setLat(location.getLatitude());
+                //lon.setText("Longitude: " + String.valueOf(myloc.getLon()));
+                //lat.setText("Latitude: " + String.valueOf(myloc.getLat()));
+            }
+        });
 
     }
 
@@ -81,12 +117,55 @@ public class MainActivity extends AppCompatActivity {
             name = curr_friend.name;
             longitude = curr_friend.longitude;
             latitude = curr_friend.latitude;
+            double point_angle = locationRelater.angleCalculation(latitude, longitude);
+            double friend_distance = locationRelater.distanceCalculation(latitude, longitude);
 
+            if(friend_distance >= curr_zoom_max){
+                displayDotOnEdge(point_angle);
+            } else {
+                displayFriendName(point_angle, friend_distance);
+            }
             //TODO: Update friend name here with relative location (longitude and latitude)
-
         }
+    }
+    private void displayFriendName(double angle, double distance){
+        //Todo: Add friend name relative to distance
+    }
+    private void displayDotOnEdge(double angle){
+        runOnUiThread(new  Runnable()
+        {
+            public void run()
+            {
+                counter += 1;
+                iv = new ImageView(MainActivity.this);
+                iv.setImageResource(R.drawable.redcircle);
+                iv.setId(View.generateViewId());
+                layout.addView(iv);
+
+                ConstraintLayout.LayoutParams lp = (ConstraintLayout.LayoutParams) iv.getLayoutParams();
+                lp.circleConstraint = R.id.compasslayout;
+                lp.circleRadius = ((ImageView) findViewById(R.id.compassImage)).getWidth()/2 - MAX_RADIUS_OFFSET;
+                lp.circleAngle = (float) angle;
+                lp.width = 30;
+                lp.height = 30;
+                iv.setLayoutParams(lp);
+            }
+        });
 
     }
+
+//    private void setCircleRadius(ImageView circle, int radius) {
+//        ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) circle.getLayoutParams();
+//        layoutParams.circleRadius = radius;
+//        circle.setLayoutParams(layoutParams);
+//    }
+//
+//    private void setCircleSize(ImageView circle, int size) {
+//        ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) circle.getLayoutParams();
+//        layoutParams.width = size;
+//        layoutParams.height = size;
+//        circle.setLayoutParams(layoutParams);
+//    }
 
     public FriendManager getFriendManager() {
         return this.friendManager;
@@ -167,7 +246,6 @@ public class MainActivity extends AppCompatActivity {
 //    }
 
 
-<<<<<<< HEAD
         SharedPreferences preferences = getSharedPreferences("IDvalue", 0);
         String locName = preferences.getString("locationOneName", "N/A");
         if (locName == "N/A") {
@@ -360,7 +438,6 @@ public class MainActivity extends AppCompatActivity {
         super.onPause();
         orientationService.unregisterSensorListeners();
     }
-
     @Override
     protected void onResume() {
         super.onResume();
