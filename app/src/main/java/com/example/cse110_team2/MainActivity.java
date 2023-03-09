@@ -31,6 +31,7 @@ import android.widget.TextView;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.HashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -38,24 +39,24 @@ import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
     private int counter = 0;
-    public static Context context;
     private LocationManager locationManager;
     private FriendManager friendManager;
     private PointRelation locationRelater;
     private OrientationService orientationService;
     private boolean firstLocUpdate;
     private final int MAX_RADIUS_OFFSET = 70;
+
+    private final int MAX_DIST = 430;
     private int curr_zoom_max;
     private MyLocation myloc;
-    private ImageView iv;
     private ConstraintLayout layout;
 
+    private HashMap<String, HashMap<String, View>> friendMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        context = getApplicationContext();
         SharedPreferences preferences = getSharedPreferences("IDvalue", 0);
         String name = preferences.getString("user", "N/A");
         if (name == "N/A") {
@@ -71,14 +72,12 @@ public class MainActivity extends AppCompatActivity {
         friendManager = FriendManager.provide();
         layout = (ConstraintLayout)findViewById(R.id.compasslayout);
 
-
+        friendMap = new HashMap<String, HashMap<String, View>>();
         curr_zoom_max = 1;
 
-        Log.d("Printing For time 0:", "Printing1");
 
         var executor = Executors.newSingleThreadScheduledExecutor();
         ScheduledFuture<?> poller = executor.scheduleAtFixedRate(() -> {
-            Log.d("Printing For time:", "Printing1");
             friendManager.updateFriendLocations();
             updateFunctions();
         }, 0, 5, TimeUnit.SECONDS);
@@ -106,49 +105,127 @@ public class MainActivity extends AppCompatActivity {
     }
     private void compassUpdate() {
         String name;
+        String uid;
         float longitude;
         float latitude;
         User curr_friend;
         ArrayList<User> friendList = friendManager.getFriends();
-        Log.d("CU", "in compass update");
-        for (int i = 0; i < friendList.size(); i++) {
+//        ArrayList<User> friendList = new ArrayList<User>();
+//        User tempUser = new User("Kevin", "abc", -117, (float)33.9870, "private");
+//        friendList.add(tempUser);
 
+        for (int i = 0; i < friendList.size(); i++) {
             curr_friend = friendList.get(i);
             name = curr_friend.name;
+            uid = curr_friend.uid;
+            upsertFriendMap(uid, name);
             longitude = curr_friend.longitude;
             latitude = curr_friend.latitude;
             double point_angle = locationRelater.angleCalculation(latitude, longitude);
             double friend_distance = locationRelater.distanceCalculation(latitude, longitude);
-
-            if(friend_distance >= curr_zoom_max){
-                displayDotOnEdge(point_angle);
+            Log.d("friends", " " + friend_distance);
+            Log.d("friends", " " + curr_zoom_max);
+            if(friend_distance < curr_zoom_max){
+                displayFriendName(uid, point_angle, friend_distance);
             } else {
-                displayFriendName(point_angle, friend_distance);
+                displayDotOnEdge(uid,point_angle);
             }
             //TODO: Update friend name here with relative location (longitude and latitude)
         }
     }
-    private void displayFriendName(double angle, double distance){
-        //Todo: Add friend name relative to distance
+
+
+
+    private void upsertFriendMap(String uid, String name){
+        if (!friendMap.containsKey(uid)) {
+            runOnUiThread(new  Runnable()
+            {
+                public void run()
+                {
+                    HashMap<String, View> viewMap = new HashMap<String, View>();
+                    TextView nameView = new TextView(MainActivity.this);
+                    ViewGroup.LayoutParams wrapParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+                    nameView.setLayoutParams(wrapParams);
+                    nameView.setText(name);
+                    nameView.setId(View.generateViewId());
+                    nameView.setVisibility(View.INVISIBLE);
+                    nameView.setTextSize(12);
+                    layout.addView(nameView);
+
+                    ImageView dotView = new ImageView(MainActivity.this);
+                    dotView.setImageResource(R.drawable.redcircle);
+                    dotView.setId(View.generateViewId());
+                    dotView.setVisibility(View.INVISIBLE);
+                    layout.addView(dotView);
+                    ConstraintLayout.LayoutParams dotLayout = (ConstraintLayout.LayoutParams) dotView.getLayoutParams();
+                    dotLayout.circleConstraint = R.id.compasslayout;
+                    dotLayout.circleRadius = ((ImageView) findViewById(R.id.compassImage)).getWidth()/2 - MAX_RADIUS_OFFSET;
+                    dotLayout.circleAngle = 0;
+                    dotLayout.width = 30;
+                    dotLayout.height = 30;
+                    dotView.setLayoutParams(dotLayout);
+
+                    viewMap.put("text", nameView);
+                    viewMap.put("dot", dotView);
+                    friendMap.put(uid, viewMap);
+                }
+            });
+        }
     }
-    private void displayDotOnEdge(double angle){
+
+    private void displayFriendName(String uid, double angle, double distance){
+
         runOnUiThread(new  Runnable()
         {
             public void run()
             {
-                counter += 1;
-                iv = new ImageView(MainActivity.this);
-                iv.setImageResource(R.drawable.redcircle);
-                iv.setId(View.generateViewId());
-                layout.addView(iv);
+                double newAngle = 90 - 360 - angle;
+                HashMap<String, View> friendViews = friendMap.get(uid);
+                View nameView = friendViews.get("text");
+                View dotView = friendViews.get("dot");
+                ConstraintLayout.LayoutParams nameLayout = (ConstraintLayout.LayoutParams) nameView.getLayoutParams();
+                int xShift = (int) (MAX_DIST * distance/curr_zoom_max * Math.cos(Math.toRadians(newAngle)));
+                int yShift = (int) (MAX_DIST * distance/curr_zoom_max* Math.sin(Math.toRadians(newAngle)));
+                Log.d("dist;", "dist: "  + distance);
+                Log.d("dist;", "angle: "  + angle);
+                Log.d("dist;", "dist conversion: "  + MAX_RADIUS_OFFSET*distance/curr_zoom_max);
+                Log.d("dist;", "xShift: "  + xShift);
+                Log.d("dist;", "yShift: "  + yShift);
+                nameLayout.setMargins(((ImageView) findViewById(R.id.compassImage)).getWidth()/2 + xShift,((ImageView) findViewById(R.id.compassImage)).getHeight()/2 + yShift,0,0);
+                nameView.setLayoutParams(nameLayout);
+                dotView.setVisibility(View.INVISIBLE);
+                nameView.setVisibility(View.VISIBLE);
+            }
+        });
+    }
 
-                ConstraintLayout.LayoutParams lp = (ConstraintLayout.LayoutParams) iv.getLayoutParams();
-                lp.circleConstraint = R.id.compasslayout;
-                lp.circleRadius = ((ImageView) findViewById(R.id.compassImage)).getWidth()/2 - MAX_RADIUS_OFFSET;
-                lp.circleAngle = (float) angle;
-                lp.width = 30;
-                lp.height = 30;
-                iv.setLayoutParams(lp);
+    private void displayDotOnEdge(String uid, double angle){
+        runOnUiThread(new  Runnable()
+        {
+            public void run()
+            {
+                HashMap<String, View> friendViews = friendMap.get(uid);
+                View nameView = friendViews.get("text");
+                View dotView = friendViews.get("dot");
+                ConstraintLayout.LayoutParams dotLayout = (ConstraintLayout.LayoutParams) dotView.getLayoutParams();
+                dotLayout.circleAngle = (float) angle;
+                dotView.setLayoutParams(dotLayout);
+                nameView.setVisibility(View.INVISIBLE);
+                dotView.setVisibility(View.VISIBLE);
+
+//                counter += 1;
+//                ImageView iv = new ImageView(MainActivity.this);
+//                iv.setImageResource(R.drawable.redcircle);
+//                iv.setId(View.generateViewId());
+//                layout.addView(iv);
+//
+//                ConstraintLayout.LayoutParams lp = (ConstraintLayout.LayoutParams) iv.getLayoutParams();
+//                lp.circleConstraint = R.id.compasslayout;
+//                lp.circleRadius = ((ImageView) findViewById(R.id.compassImage)).getWidth()/2 - MAX_RADIUS_OFFSET;
+//                lp.circleAngle = (float) angle;
+//                lp.width = 30;
+//                lp.height = 30;
+//                iv.setLayoutParams(lp);
             }
         });
 
