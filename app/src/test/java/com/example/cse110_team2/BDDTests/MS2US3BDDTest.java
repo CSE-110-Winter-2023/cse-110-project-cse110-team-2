@@ -127,7 +127,7 @@ public class MS2US3BDDTest {
             activity.compassUpdate();
             HashMap<String, HashMap<String, View>> friendMap = activity.friendMap;
 
-            assertEquals(friendMap.size(), 0);
+            assertEquals(friendList.size(), 0);
             activity.setMock(false);
         });
     }
