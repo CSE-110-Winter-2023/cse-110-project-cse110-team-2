@@ -47,17 +47,19 @@ public class MainActivity extends AppCompatActivity {
     private final int MAX_RADIUS_OFFSET = 70;
 
     private final int MAX_DIST = 430;
-    private int curr_zoom_max;
+    public int curr_zoom_max;
     private MyLocation myloc;
     private ConstraintLayout layout;
 
-    private HashMap<String, HashMap<String, View>> friendMap;
+    private boolean inMock;
+    public HashMap<String, HashMap<String, View>> friendMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         SharedPreferences preferences = getSharedPreferences("IDvalue", 0);
+        inMock = false;
         String name = preferences.getString("user", "N/A");
         if (name == "N/A") {
             Log.d("debug", name);
@@ -65,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         }
 
-        myloc = new MyLocation(0, 0);
+        myloc = new MyLocation(-117, 34);
         locationRelater = new PointRelation(myloc);
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 //
@@ -90,8 +92,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onLocationChanged(@NonNull Location location) {
                 firstLocUpdate = true;
-                myloc.setLon(location.getLongitude());
-                myloc.setLat(location.getLatitude());
+                if (inMock){
+                    myloc.setLon(-117);
+                    myloc.setLat(34);
+                } else {
+                    myloc.setLon(location.getLongitude());
+                    myloc.setLat(location.getLatitude());
+                }
+
                 //lon.setText("Longitude: " + String.valueOf(myloc.getLon()));
                 //lat.setText("Latitude: " + String.valueOf(myloc.getLat()));
             }
@@ -99,17 +107,28 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    public void setMock(boolean inMock){
+        this.inMock = inMock;
+    }
+
+    public boolean getMock(){
+        return this.inMock;
+    }
+
     public void updateFunctions(){
         //Might be necessary to calculate azimuth angle/zoom/etc
         compassUpdate();
     }
-    private void compassUpdate() {
+    public void compassUpdate() {
         String name;
         String uid;
         float longitude;
         float latitude;
         User curr_friend;
         ArrayList<User> friendList = friendManager.getFriends();
+        if (inMock) {
+            friendList = friendManager.getMockFriends();
+        }
 //        ArrayList<User> friendList = new ArrayList<User>();
 //        User tempUser = new User("Kevin", "abc", -117, (float)33.9870, "private");
 //        friendList.add(tempUser);
@@ -198,6 +217,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
 
     private void displayDotOnEdge(String uid, double angle){
         runOnUiThread(new  Runnable()
