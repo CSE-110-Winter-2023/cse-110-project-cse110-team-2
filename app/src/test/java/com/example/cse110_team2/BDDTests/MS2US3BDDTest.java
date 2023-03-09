@@ -122,11 +122,11 @@ public class MS2US3BDDTest {
             // Mock that we already have two friends
             SharedCompassAPI api = new SharedCompassAPI();
             FriendManager friendManager = activity.getFriendManager();
-            ArrayList<User> friendList = friendManager.getFriends();
+            ArrayList<User> friendList = friendManager.getMockFriends();
             activity.compassUpdate();
             HashMap<String, HashMap<String, View>> friendMap = activity.friendMap;
 
-            assertEquals(friendMap.size(), 0);
+            assertEquals(friendList.size(), 0);
             activity.setMock(false);
         });
     }
