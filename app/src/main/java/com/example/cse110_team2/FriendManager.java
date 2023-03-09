@@ -6,6 +6,7 @@ import android.util.Log;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,8 +17,11 @@ public class FriendManager {
 
     private ArrayList<User> friends;
 
+    private ArrayList<User> mockFriends;
+
     public FriendManager(){
         friends = new ArrayList<User>(0);
+        mockFriends = new ArrayList<User>(0);
     }
 
     public static FriendManager provide(){
@@ -29,6 +33,9 @@ public class FriendManager {
 
     public ArrayList<User> getFriends(){
         return friends;
+    }
+    public ArrayList<User> getMockFriends(){
+        return mockFriends;
     }
 
     public void addFriend(User user){
