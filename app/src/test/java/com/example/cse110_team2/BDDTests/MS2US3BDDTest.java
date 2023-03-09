@@ -122,7 +122,8 @@ public class MS2US3BDDTest {
             // Mock that we already have two friends
             SharedCompassAPI api = new SharedCompassAPI();
             FriendManager friendManager = activity.getFriendManager();
-            ArrayList<User> friendList = friendManager.getFriends();
+            ArrayList<User> friendList = friendManager.getMockFriends();
+            friendList.clear();
             activity.compassUpdate();
             HashMap<String, HashMap<String, View>> friendMap = activity.friendMap;
 
