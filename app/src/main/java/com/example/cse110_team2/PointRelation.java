@@ -31,18 +31,14 @@ public class PointRelation {
         final int R = 6371; // Radius of the earth
         final double metersToMiles = 1609.344;
         double latDistance = Math.toRadians(otherLat - myCoords.getLat());
+
         double lonDistance = Math.toRadians(otherLon - myCoords.getLon());
         double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
                 + Math.cos(Math.toRadians(myCoords.getLat())) * Math.cos(Math.toRadians(otherLat))
                 * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
         double distance = R * c * 1000; // convert to meters
-
-        return Math.sqrt(distance)/(metersToMiles);
-        // 0 -1
-        // 1- 10
-        // 10-100
-        // 100 - 500
+        return (distance)/(metersToMiles);
     }
 
 }
