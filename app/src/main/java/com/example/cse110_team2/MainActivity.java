@@ -23,8 +23,10 @@ import android.util.Log;
 
 import java.util.ArrayList;
 
+
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -50,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
     public int curr_zoom_max;
     private MyLocation myloc;
     private ConstraintLayout layout;
+    private ZoomManager zoomManager;
 
     private boolean inMock;
     public HashMap<String, HashMap<String, View>> friendMap;
@@ -70,6 +73,9 @@ public class MainActivity extends AppCompatActivity {
         myloc = new MyLocation(-117, 34);
         locationRelater = new PointRelation(myloc);
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        zoomManager = new ZoomManager();
+        updateZoomButtons();
+
 //
         friendManager = FriendManager.provide();
         layout = (ConstraintLayout)findViewById(R.id.compasslayout);
@@ -117,7 +123,22 @@ public class MainActivity extends AppCompatActivity {
 
     public void updateFunctions(){
         //Might be necessary to calculate azimuth angle/zoom/etc
+        updateCompassImage();
         compassUpdate();
+    }
+
+    public void updateCompassImage(){
+        int zoomAmount = zoomManager.getZoomAmount();
+        switch(zoomAmount){
+            case 0: //TODO: add first image
+                    break;
+            case 1: //TODO: add second image
+                    break;
+            case 2: //TODO: add third image
+                    break;
+            case 3: //TODO: add fourth image
+                    break;
+        }
     }
     public void compassUpdate() {
         String name;
@@ -152,6 +173,7 @@ public class MainActivity extends AppCompatActivity {
             //TODO: Update friend name here with relative location (longitude and latitude)
         }
     }
+
 
 
 
@@ -580,6 +602,33 @@ public class MainActivity extends AppCompatActivity {
     public void onAddFriendClicked(View view) {
         Intent intent = new Intent(this, AddFriendsActivity.class);
         startActivity(intent);
+
+    }
+
+    public void zoomInClicked(View view){
+        zoomManager.zoomIn();
+        updateZoomButtons();
+        updateFunctions();
+//        Log.d("PRINTING TEST:", "Zoom in");
+    }
+    public void zoomOutClicked(View view){
+        zoomManager.zoomOut();
+        updateZoomButtons();
+        updateFunctions();
+//        Log.d("PRINTING TEST:", "Zoom out");
+
+    }
+
+    private void updateZoomButtons(){
+        Button zoomInBtn = (Button) findViewById(R.id.zoomIn);
+        Button zoomOutBtn = (Button) findViewById(R.id.zoomOut);
+
+        boolean canZoomIn = zoomManager.canZoomIn();
+        boolean canZoomOut = zoomManager.canZoomOut();
+
+        zoomInBtn.setEnabled(canZoomIn);
+        zoomOutBtn.setEnabled(canZoomOut);
+
 
     }
 }
