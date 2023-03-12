@@ -1,20 +1,16 @@
 package com.example.cse110_team2;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.lifecycle.MutableLiveData;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -26,14 +22,11 @@ import java.util.ArrayList;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.google.gson.annotations.SerializedName;
-
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -72,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 //
         friendManager = FriendManager.provide();
-        layout = (ConstraintLayout)findViewById(R.id.compasslayout);
+        layout = (ConstraintLayout) findViewById(R.id.compasslayout);
 
         friendMap = new HashMap<String, HashMap<String, View>>();
         curr_zoom_max = 1;
@@ -82,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
         ScheduledFuture<?> poller = executor.scheduleAtFixedRate(() -> {
             friendManager.updateFriendLocations();
             updateFunctions();
+            updateLocationStatus();
         }, 0, 5, TimeUnit.SECONDS);
 
         if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
@@ -92,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onLocationChanged(@NonNull Location location) {
                 firstLocUpdate = true;
-                if (inMock){
+                if (inMock) {
                     myloc.setLon(-117);
                     myloc.setLat(34);
                 } else {
@@ -107,18 +101,19 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void setMock(boolean inMock){
+    public void setMock(boolean inMock) {
         this.inMock = inMock;
     }
 
-    public boolean getMock(){
+    public boolean getMock() {
         return this.inMock;
     }
 
-    public void updateFunctions(){
+    public void updateFunctions() {
         //Might be necessary to calculate azimuth angle/zoom/etc
         compassUpdate();
     }
+
     public void compassUpdate() {
         String name;
         String uid;
@@ -144,23 +139,20 @@ public class MainActivity extends AppCompatActivity {
             double friend_distance = locationRelater.distanceCalculation(latitude, longitude);
             Log.d("friends", " " + friend_distance);
             Log.d("friends", " " + curr_zoom_max);
-            if(friend_distance < curr_zoom_max){
+            if (friend_distance < curr_zoom_max) {
                 displayFriendName(uid, point_angle, friend_distance);
             } else {
-                displayDotOnEdge(uid,point_angle);
+                displayDotOnEdge(uid, point_angle);
             }
             //TODO: Update friend name here with relative location (longitude and latitude)
         }
     }
 
 
-
-    private void upsertFriendMap(String uid, String name){
+    private void upsertFriendMap(String uid, String name) {
         if (!friendMap.containsKey(uid)) {
-            runOnUiThread(new  Runnable()
-            {
-                public void run()
-                {
+            runOnUiThread(new Runnable() {
+                public void run() {
                     HashMap<String, View> viewMap = new HashMap<String, View>();
                     TextView nameView = new TextView(MainActivity.this);
                     ViewGroup.LayoutParams wrapParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
@@ -172,13 +164,13 @@ public class MainActivity extends AppCompatActivity {
                     layout.addView(nameView);
 
                     ImageView dotView = new ImageView(MainActivity.this);
-                    dotView.setImageResource(R.drawable.redcircle);
+                    dotView.setImageResource(R.drawable.circle);
                     dotView.setId(View.generateViewId());
                     dotView.setVisibility(View.INVISIBLE);
                     layout.addView(dotView);
                     ConstraintLayout.LayoutParams dotLayout = (ConstraintLayout.LayoutParams) dotView.getLayoutParams();
                     dotLayout.circleConstraint = R.id.compasslayout;
-                    dotLayout.circleRadius = ((ImageView) findViewById(R.id.compassImage)).getWidth()/2 - MAX_RADIUS_OFFSET;
+                    dotLayout.circleRadius = ((ImageView) findViewById(R.id.compassImage)).getWidth() / 2 - MAX_RADIUS_OFFSET;
                     dotLayout.circleAngle = 0;
                     dotLayout.width = 30;
                     dotLayout.height = 30;
@@ -190,6 +182,35 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
         }
+    }
+
+    public void updateLocationStatus() {
+        if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+        }
+        long unixTime = System.currentTimeMillis() ;
+        long locationTime = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getTime();
+
+        boolean hasLocation = unixTime - locationTime > 60000 ? false:true;
+        ImageView statusIndicator = findViewById(R.id.LocationIndicator);
+        TextView statusText = findViewById(R.id.LocationText);
+
+        runOnUiThread(new  Runnable() {
+            @Override
+            public void run() {
+
+                if (hasLocation) {
+                    statusIndicator.setColorFilter(Color.argb(255, 0, 255, 0));
+                    statusText.setText("Live Location");
+                } else {
+                    statusIndicator.setColorFilter(Color.argb(255, 255, 0, 0));
+                    statusText.setText(String.valueOf((unixTime-locationTime )/60000) + "m");
+                }
+
+            }
+        });
+
     }
 
     private void displayFriendName(String uid, double angle, double distance){
