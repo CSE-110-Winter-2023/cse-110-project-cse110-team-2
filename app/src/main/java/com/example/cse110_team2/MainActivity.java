@@ -77,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
 
 //
         friendManager = FriendManager.provide();
+        friendManager.loadFriendsFromSharedPreferences(preferences);
         layout = (ConstraintLayout)findViewById(R.id.compasslayout);
 
         friendMap = new HashMap<String, HashMap<String, View>>();
@@ -652,13 +653,13 @@ public void rotate(Float az, String uid) {
     public void zoomInClicked(View view){
         zoomManager.zoomIn();
         updateZoomButtons();
-        updateFunctions();
+        updateCompassImage();
 //        Log.d("PRINTING TEST:", "Zoom in");
     }
     public void zoomOutClicked(View view){
         zoomManager.zoomOut();
         updateZoomButtons();
-        updateFunctions();
+        updateCompassImage();
 //        Log.d("PRINTING TEST:", "Zoom out");
 
     }
