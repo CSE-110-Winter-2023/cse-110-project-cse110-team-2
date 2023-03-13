@@ -246,10 +246,11 @@
         android:id="@+id/LocationText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="4dp"
         android:layout_marginTop="20dp"
         android:text="GPS Signal Found"
         app:layout_constraintStart_toEndOf="@+id/LocationIndicator"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/zoomIn"
