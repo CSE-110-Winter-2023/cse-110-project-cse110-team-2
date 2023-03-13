@@ -46,7 +46,6 @@ public class RotateUnitTests {
             activity.mockCompassUpdate();
             var friendList = activity.getFriendManager().getMockFriends();
 
-            // TODO penis
             for (int i = 0; i < friendList.size(); i++) {
                 var curr_friend = friendList.get(i);
 
