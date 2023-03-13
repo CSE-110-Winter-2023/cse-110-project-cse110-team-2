@@ -1,20 +1,17 @@
 package com.example.cse110_team2;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.MutableLiveData;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -31,8 +28,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.google.gson.annotations.SerializedName;
-
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -94,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
         ScheduledFuture<?> poller = executor.scheduleAtFixedRate(() -> {
             friendManager.updateFriendLocations();
             updateFunctions(orientationService.getOrientation().getValue());
+            updateLocationStatus();
         }, 0, 5, TimeUnit.SECONDS);
 
         if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
@@ -104,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onLocationChanged(@NonNull Location location) {
                 firstLocUpdate = true;
-                if (inMock){
+                if (inMock) {
                     myloc.setLon(-117);
                     myloc.setLat(34);
                 } else {
@@ -240,6 +237,35 @@ public void rotate(Float az, String uid) {
                 }
             });
         }
+    }
+
+    public void updateLocationStatus() {
+        if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+        }
+        long unixTime = System.currentTimeMillis() ;
+        long locationTime = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getTime();
+
+        boolean hasLocation = unixTime - locationTime > 60000 ? false:true;
+        ImageView statusIndicator = findViewById(R.id.LocationIndicator);
+        TextView statusText = findViewById(R.id.LocationText);
+
+        runOnUiThread(new  Runnable() {
+            @Override
+            public void run() {
+
+                if (hasLocation) {
+                    statusIndicator.setColorFilter(Color.argb(255, 0, 255, 0));
+                    statusText.setText("Live Location");
+                } else {
+                    statusIndicator.setColorFilter(Color.argb(255, 255, 0, 0));
+                    statusText.setText(String.valueOf((unixTime-locationTime )/60000) + "m");
+                }
+
+            }
+        });
+
     }
 
     private void displayFriendName(String uid, double angle, double distance){
