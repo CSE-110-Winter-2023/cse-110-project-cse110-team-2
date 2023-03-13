@@ -186,19 +186,19 @@
         android:id="@+id/add_friend_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_margin="16dp"
         android:onClick="onAddFriendClicked"
         android:text="Add Friend"
-        android:layout_margin="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-<!--    <ImageView-->
-<!--        android:id="@+id/imageView"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        app:srcCompat="@drawable/zoom1"-->
-<!--        tools:layout_editor_absoluteX="39dp"-->
-<!--        tools:layout_editor_absoluteY="199dp" />-->
+    <!--    <ImageView-->
+    <!--        android:id="@+id/imageView"-->
+    <!--        android:layout_width="wrap_content"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        app:srcCompat="@drawable/zoom1"-->
+    <!--        tools:layout_editor_absoluteX="39dp"-->
+    <!--        tools:layout_editor_absoluteY="199dp" />-->
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/compasslayout"
@@ -210,7 +210,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
-
 
 
         <ImageView
@@ -228,4 +227,35 @@
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <Button
+        android:id="@+id/zoomIn"
+        android:layout_width="66dp"
+        android:layout_height="51dp"
+        android:layout_marginStart="326dp"
+        android:layout_marginTop="621dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="64dp"
+        android:text="+"
+        android:onClick="zoomInClicked"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/zoomOut"
+        android:layout_width="67dp"
+        android:layout_height="49dp"
+        android:layout_marginStart="326dp"
+        android:layout_marginTop="668dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="16dp"
+        android:text="-"
+        android:onClick="zoomOutClicked"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
