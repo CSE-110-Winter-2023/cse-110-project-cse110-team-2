@@ -178,6 +178,7 @@ public class MainActivity extends AppCompatActivity {
             //TODO: Update friend name here with relative location (longitude and latitude)
             rotate(az, uid);
         }
+        handleNameOverlap();
     }
 
 public void rotate(Float az, String uid) {
@@ -293,6 +294,65 @@ public void rotate(Float az, String uid) {
             }
         });
     }
+
+    private void handleNameOverlap(){
+        runOnUiThread(new Runnable()
+        {
+            public void run()
+            {
+                ImageView compass = (ImageView) findViewById(R.id.compassImage);
+                Log.d("timer", "Compass width: " + compass.getMeasuredWidth());
+                ArrayList<View> friendViews = new ArrayList<View>();
+                Log.d("timer", "calm");
+                friendMap.forEach((uid,view) -> {
+                    if (view.get("text").getVisibility() == View.VISIBLE) {
+                        friendViews.add(view.get("text"));
+                    }
+                });
+                friendViews.sort((v1,v2) -> (int)(v1.getX()-v2.getX()));
+                for (int i = 0; i< friendViews.size(); i++) {
+                    Log.d("timer", " NEW STUFF " + ((TextView)friendViews.get(i)).getText());
+                }
+                for(int i = 0; i < friendViews.size(); i++) {
+                    TextView view1 = (TextView)friendViews.get(i);
+                    view1.measure(0,0);
+                    while (view1.getText().length() > 0 && view1.getMeasuredWidth() + view1.getX() > ((ImageView)findViewById(R.id.compassImage)).getWidth()/2+Math.sqrt(Math.pow(MAX_DIST,2) - (Math.pow((double)(view1.getY()-((ImageView)findViewById(R.id.compassImage)).getHeight()/2),2)))){
+                        Log.d("math sin", "" + view1.getMeasuredWidth() + view1.getX());
+                        Log.d("math sin", "" + Math.sqrt(Math.pow(MAX_DIST,2) - (Math.pow((double)(view1.getY()-((ImageView)findViewById(R.id.compassImage)).getHeight()/2),2))));
+                        view1.setText(view1.getText().subSequence(0,view1.getText().length()-1));
+                        view1.measure(0,0);
+                    }
+                }
+                int i = 0;
+                while (i < friendViews.size()-1) {
+                    TextView view1 = (TextView)friendViews.get(i);
+                    view1.measure(0,0);
+                    TextView view2 = (TextView)friendViews.get(i+1);
+                    view2.measure(0,0);
+                    if (view1.getX() == 0.0 || view2.getX() == 0.0) {
+                        break;
+                    }
+                    if (view1.getX() == view2.getX() && view1.getY() == view2.getY()){
+                        view1.setText(view1.getText() + " & " + view2.getText());
+                        view2.setText("");
+                        friendViews.remove(i+1);
+                    }
+                    else if (view1.getY() <= view2.getY() && view1.getY()+view1.getMeasuredHeight() >= view2.getY()
+                            || view1.getY() <= view2.getY()+view2.getMeasuredHeight() && view1.getY()+view1.getMeasuredHeight() >= view2.getY()+view2.getMeasuredHeight()){
+                        while (view1.getMeasuredWidth() + view1.getX() > view2.getX() && view1.getText().length() > 0){
+                            Log.d("timer", i + "  " + view1.getText() + "  ,   " + view2.getText());
+                            view1.setText(view1.getText().subSequence(0,view1.getText().length()-1));
+                            view1.measure(0,0);
+                        }
+                    }
+                    Log.d("timer", i + "  " + view1.getX());
+                    Log.d("timer", i + "  " + view2.getMeasuredWidth());
+                    i++;
+                }
+            }
+        });
+    }
+
 
 
     private void displayDotOnEdge(String uid, double angle){
