@@ -81,7 +81,10 @@ public class MainActivity extends AppCompatActivity {
         ScheduledFuture<?> poller = executor.scheduleAtFixedRate(() -> {
             friendManager.updateFriendLocations();
             updateFunctions();
+
             updateLocationStatus();
+            Log.d("IN SCHEDULED UPDATE", "scheduling");
+
         }, 0, 5, TimeUnit.SECONDS);
 
         if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
@@ -125,13 +128,13 @@ public class MainActivity extends AppCompatActivity {
     public void updateCompassImage(){
         int zoomAmount = zoomManager.getZoomAmount();
         switch(zoomAmount){
-            case 0: //TODO: add first image
+            case 0: ((ImageView) findViewById(R.id.compassImage)).setImageResource(R.drawable.zoom);
                     break;
-            case 1: //TODO: add second image
+            case 1: ((ImageView) findViewById(R.id.compassImage)).setImageResource(R.drawable.zoom1);
                     break;
-            case 2: //TODO: add third image
+            case 2: ((ImageView) findViewById(R.id.compassImage)).setImageResource(R.drawable.zoom2);
                     break;
-            case 3: //TODO: add fourth image
+            case 3: ((ImageView) findViewById(R.id.compassImage)).setImageResource(R.drawable.zoom3);
                     break;
         }
     }
