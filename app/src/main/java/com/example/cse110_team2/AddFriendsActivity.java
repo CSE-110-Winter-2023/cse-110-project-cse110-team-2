@@ -29,10 +29,11 @@ public class AddFriendsActivity extends AppCompatActivity {
 
     public void onAddBtnClicked(View view){
         TextView id = (TextView)findViewById(R.id.friendID);
+        SharedPreferences preferences = getSharedPreferences("IDvalue", 0);
         User friend = api.getUserAsync(id.getText().toString());
 
         friendManager.addFriend(friend);
-
+        friendManager.saveFriendsToSharedPreferences(preferences);
 
 
         Intent intent = new Intent(this, MainActivity.class);

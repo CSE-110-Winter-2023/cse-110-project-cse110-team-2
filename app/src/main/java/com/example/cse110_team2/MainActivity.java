@@ -78,17 +78,22 @@ public class MainActivity extends AppCompatActivity {
 
 //
         friendManager = FriendManager.provide();
+        friendManager.loadFriendsFromSharedPreferences(preferences);
         layout = (ConstraintLayout)findViewById(R.id.compasslayout);
 
         friendMap = new HashMap<String, HashMap<String, View>>();
         curr_zoom_max = 1;
 
+        orientationService = OrientationService.singleton(MainActivity.this);
+        orientationService.getOrientation().observe(this, azimuth -> {
+            updateFunctions(azimuth);
+        });
+
 
         var executor = Executors.newSingleThreadScheduledExecutor();
         ScheduledFuture<?> poller = executor.scheduleAtFixedRate(() -> {
             friendManager.updateFriendLocations();
-            updateFunctions();
-            Log.d("IN SCHEDULED UPDATE", "scheduling");
+            updateFunctions(orientationService.getOrientation().getValue());
         }, 0, 5, TimeUnit.SECONDS);
 
         if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
@@ -105,6 +110,7 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     myloc.setLon(location.getLongitude());
                     myloc.setLat(location.getLatitude());
+                    updateFunctions(orientationService.getOrientation().getValue());
                 }
 
                 //lon.setText("Longitude: " + String.valueOf(myloc.getLon()));
@@ -122,10 +128,10 @@ public class MainActivity extends AppCompatActivity {
         return this.inMock;
     }
 
-    public void updateFunctions(){
+    public void updateFunctions(Float az){
         //Might be necessary to calculate azimuth angle/zoom/etc
+        compassUpdate(az);
         updateCompassImage();
-        compassUpdate();
     }
 
     public void updateCompassImage(){
@@ -141,7 +147,8 @@ public class MainActivity extends AppCompatActivity {
                     break;
         }
     }
-    public void compassUpdate() {
+
+    public void compassUpdate(Float az) {
         String name;
         String uid;
         float longitude;
@@ -172,10 +179,30 @@ public class MainActivity extends AppCompatActivity {
                 displayDotOnEdge(uid,point_angle);
             }
             //TODO: Update friend name here with relative location (longitude and latitude)
+            rotate(az, uid);
         }
     }
 
+public void rotate(Float az, String uid) {
+        if (az == null) { az = 0.0F; }
+        Float finalAz = az;
+        runOnUiThread(new Runnable() {
+            public void run() {
 
+
+                HashMap<String, View> friendViews = friendMap.get(uid);
+                View nameView = friendViews.get("text");
+                View dotView = friendViews.get("dot");
+                ConstraintLayout.LayoutParams nameLayout = (ConstraintLayout.LayoutParams) nameView.getLayoutParams();
+                ConstraintLayout.LayoutParams dotLayout = (ConstraintLayout.LayoutParams) dotView.getLayoutParams();
+
+                nameLayout.circleAngle -= Math.toDegrees(finalAz);
+                dotLayout.circleAngle -= Math.toDegrees(finalAz);
+                nameView.setLayoutParams(nameLayout);
+                dotView.setLayoutParams(dotLayout);
+            }
+        });
+}
 
 
     private void upsertFriendMap(String uid, String name){
@@ -294,9 +321,27 @@ public class MainActivity extends AppCompatActivity {
     public void mockAddFriend(User user) {
         this.friendManager.addFriend(user);
     }
-        //firstLocUpdate = false;
 
+    public void setOrientationMock(MutableLiveData<Float> ld) {
+        orientationService.setMockOrientationSource(ld);
+    }
 
+    public void mockCompassUpdate() {
+        float az = this.orientationService.getOrientation().getValue();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        orientationService.unregisterSensorListeners();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        orientationService = OrientationService.singleton(this);
+        orientationService.registerSensorListeners();
+    }
 /*
 //
 //
@@ -609,13 +654,13 @@ public class MainActivity extends AppCompatActivity {
     public void zoomInClicked(View view){
         zoomManager.zoomIn();
         updateZoomButtons();
-        updateFunctions();
+        updateCompassImage();
 //        Log.d("PRINTING TEST:", "Zoom in");
     }
     public void zoomOutClicked(View view){
         zoomManager.zoomOut();
         updateZoomButtons();
-        updateFunctions();
+        updateCompassImage();
 //        Log.d("PRINTING TEST:", "Zoom out");
 
     }
