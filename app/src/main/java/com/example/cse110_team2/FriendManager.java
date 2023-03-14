@@ -28,7 +28,18 @@ public class FriendManager {
         if(instance == null){
             instance = new FriendManager();
         }
+        instance.removeNull();
+
         return instance;
+    }
+
+    public void removeNull() {
+        for (int i = 0; i < friends.size(); i++) {
+            var f = friends.get(i);
+            if ((f == null) || (f.uid.equals("")) || (f.name == null)) {
+                friends.remove(i);
+            }
+        }
     }
 
     public ArrayList<User> getFriends(){

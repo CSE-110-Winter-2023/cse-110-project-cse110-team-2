@@ -58,7 +58,7 @@ public class MS2US3BDDTest {
             ArrayList<User> friendList = friendManager.getMockFriends();
             friendList.add(friend1);
             friendList.add(friend2);
-            activity.compassUpdate();
+            activity.compassUpdate(0.0F);
             HashMap<String, HashMap<String, View>> friendMap = activity.friendMap;
             TextView friend1Text = (TextView) friendMap.get("friend1UID").get("text");
             TextView friend2Text = (TextView) friendMap.get("friend2UID").get("text");
@@ -96,7 +96,7 @@ public class MS2US3BDDTest {
             ArrayList<User> friendList = friendManager.getMockFriends();
             friendList.add(friend1);
             friendList.add(friend2);
-            activity.compassUpdate();
+            activity.compassUpdate(0.0F);
             HashMap<String, HashMap<String, View>> friendMap = activity.friendMap;
             View friend1Text = friendMap.get("friend1UID").get("dot");
             View friend2Text = friendMap.get("friend2UID").get("dot");
@@ -125,11 +125,13 @@ public class MS2US3BDDTest {
             FriendManager friendManager = activity.getFriendManager();
             ArrayList<User> friendList = friendManager.getMockFriends();
             friendList.clear();
-            activity.compassUpdate();
+            activity.compassUpdate(0.0F);
             HashMap<String, HashMap<String, View>> friendMap = activity.friendMap;
 
             assertEquals(friendList.size(), 0);
             activity.setMock(false);
         });
     }
+
 }
+

@@ -14,12 +14,12 @@ public class APITest {
     public void testGetUser() {
         SharedCompassAPI api = SharedCompassAPI.provide();
 
-        User fetchedUser =  api.getUser("point-nemo");
+        User fetchedUser =  api.getUser("36bdd7ba-d0b4-4160-9d92-bd8f484b24a9");
 
         assertNotNull(fetchedUser);
-        assertEquals(fetchedUser.name, "Point Nemo");
-        assertEquals(fetchedUser.latitude, -48.876667, 0.1);
-        assertEquals(fetchedUser.longitude, -123.393333, 0.1);
+        assertEquals(fetchedUser.name, "test-user-sudo");
+        assertEquals(fetchedUser.latitude, 32.8811, 0.1);
+        assertEquals(fetchedUser.longitude, -117.237575, 0.1);
 
     }
 

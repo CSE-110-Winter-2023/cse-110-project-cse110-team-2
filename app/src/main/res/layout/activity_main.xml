@@ -228,6 +228,30 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+
+    <ImageView
+        android:id="@+id/LocationIndicator"
+        android:layout_width="20sp"
+        android:layout_height="20sp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="20dp"
+        android:src="@drawable/circle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@android:color/holo_green_dark" />
+
+
+    <TextView
+        android:id="@+id/LocationText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="20dp"
+        android:text="GPS Signal Found"
+        app:layout_constraintStart_toEndOf="@+id/LocationIndicator"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <Button
         android:id="@+id/zoomIn"
         android:layout_width="66dp"
