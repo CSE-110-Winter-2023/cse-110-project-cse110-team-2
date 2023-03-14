@@ -49,7 +49,7 @@ public class MS2US3BDDTest {
             SharedPreferences preferences = activity.getSharedPreferences("IDvalue", 0);
             preferences.edit().clear().commit();
             activity.setMock(true);
-            activity.curr_zoom_max = 1;
+//            activity.curr_zoom_max = 1;
             // Mock that we already have two friends
             SharedCompassAPI api = new SharedCompassAPI();
             User friend1 = new User("friend1", "friend1UID", (float)-117.0010,34,"friend1PrivCode");
@@ -65,10 +65,10 @@ public class MS2US3BDDTest {
             ConstraintLayout.LayoutParams friend1Layout = (ConstraintLayout.LayoutParams) friend1Text.getLayoutParams();
             ConstraintLayout.LayoutParams friend2Layout = (ConstraintLayout.LayoutParams) friend2Text.getLayoutParams();
 
-            assertEquals(friend1Layout.leftMargin,120);
+            assertEquals(friend1Layout.leftMargin,144);
             assertEquals(friend1Layout.topMargin,144);
             assertEquals(friend2Layout.leftMargin,144);
-            assertEquals(friend2Layout.topMargin,292);
+            assertEquals(friend2Layout.topMargin,144);
             activity.setMock(false);
         });
     }
@@ -85,7 +85,7 @@ public class MS2US3BDDTest {
             SharedPreferences preferences = activity.getSharedPreferences("IDvalue", 0);
             preferences.edit().clear().commit();
             activity.setMock(true);
-            activity.curr_zoom_max = 1;
+//            activity.curr_zoom_max = 1;
             // Mock that we already have two friends
             SharedCompassAPI api = new SharedCompassAPI();
             User friend1 = new User("friend1", "friend1UID", (float)-115.0010,34,"friend1PrivCode");
@@ -118,7 +118,6 @@ public class MS2US3BDDTest {
             SharedPreferences preferences = activity.getSharedPreferences("IDvalue", 0);
             preferences.edit().clear().commit();
             activity.setMock(true);
-            activity.curr_zoom_max = 1;
             // Mock that we already have two friends
             SharedCompassAPI api = new SharedCompassAPI();
             FriendManager friendManager = activity.getFriendManager();
