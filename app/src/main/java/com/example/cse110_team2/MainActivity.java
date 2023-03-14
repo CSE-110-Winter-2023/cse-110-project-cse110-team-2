@@ -131,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public void updateFunctions(){
+    public void updateFunctions(Float az){
         int width = ((ImageView) findViewById(R.id.compassImage)).getWidth();
         Log.d("COMPASS RAD", "" + width);
         zoomManager.setCompassWidth((double) width);
