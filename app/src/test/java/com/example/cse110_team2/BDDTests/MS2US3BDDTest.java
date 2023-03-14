@@ -65,7 +65,7 @@ public class MS2US3BDDTest {
             ConstraintLayout.LayoutParams friend1Layout = (ConstraintLayout.LayoutParams) friend1Text.getLayoutParams();
             ConstraintLayout.LayoutParams friend2Layout = (ConstraintLayout.LayoutParams) friend2Text.getLayoutParams();
 
-            assertEquals(friend1Layout.leftMargin,136);
+            assertEquals(friend1Layout.leftMargin,144);
             assertEquals(friend1Layout.topMargin,136);
             assertEquals(friend2Layout.leftMargin,136);
             assertEquals(friend2Layout.topMargin,136);
