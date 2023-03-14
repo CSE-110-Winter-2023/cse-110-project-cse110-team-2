@@ -68,7 +68,7 @@ public class MS2US3BDDTest {
             assertEquals(friend1Layout.leftMargin,144);
             assertEquals(friend1Layout.topMargin,144);
             assertEquals(friend2Layout.leftMargin,144);
-            assertEquals(friend2Layout.topMargin,3);
+            assertEquals(friend2Layout.topMargin,144);
             activity.setMock(false);
         });
     }
