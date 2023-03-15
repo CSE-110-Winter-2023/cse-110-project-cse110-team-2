@@ -173,7 +173,7 @@ public class MainActivity extends AppCompatActivity {
             Log.d("friends", " " + friend_distance);
             Log.d("friends", " " + curr_zoom_max);
             if(friend_distance < curr_zoom_max){
-                displayFriendName(uid, point_angle, friend_distance);
+                displayFriendName(uid, point_angle, friend_distance, orientationService.getOrientation().getValue());
             } else {
                 displayDotOnEdge(uid,point_angle);
             }
@@ -190,14 +190,10 @@ public void rotate(Float az, String uid) {
 
 
                 HashMap<String, View> friendViews = friendMap.get(uid);
-                View nameView = friendViews.get("text");
                 View dotView = friendViews.get("dot");
-                ConstraintLayout.LayoutParams nameLayout = (ConstraintLayout.LayoutParams) nameView.getLayoutParams();
                 ConstraintLayout.LayoutParams dotLayout = (ConstraintLayout.LayoutParams) dotView.getLayoutParams();
 
-                nameLayout.circleAngle -= Math.toDegrees(finalAz);
                 dotLayout.circleAngle -= Math.toDegrees(finalAz);
-                nameView.setLayoutParams(nameLayout);
                 dotView.setLayoutParams(dotLayout);
             }
         });
@@ -241,7 +237,9 @@ public void rotate(Float az, String uid) {
         }
     }
 
-    private void displayFriendName(String uid, double angle, double distance){
+    private void displayFriendName(String uid, double angle, double distance, Float az){
+        if (az == null) { az = 0.0F; }
+        Float finalAz = az;
 
         runOnUiThread(new  Runnable()
         {
@@ -252,8 +250,8 @@ public void rotate(Float az, String uid) {
                 View nameView = friendViews.get("text");
                 View dotView = friendViews.get("dot");
                 ConstraintLayout.LayoutParams nameLayout = (ConstraintLayout.LayoutParams) nameView.getLayoutParams();
-                int xShift = (int) (MAX_DIST * distance/curr_zoom_max * Math.cos(Math.toRadians(newAngle)));
-                int yShift = (int) (MAX_DIST * distance/curr_zoom_max* Math.sin(Math.toRadians(newAngle)));
+                int xShift = (int) (MAX_DIST * distance/curr_zoom_max * Math.cos(Math.toRadians(newAngle - finalAz)));
+                int yShift = (int) (MAX_DIST * distance/curr_zoom_max* Math.sin(Math.toRadians(newAngle - finalAz)));
                 Log.d("dist;", "dist: "  + distance);
                 Log.d("dist;", "angle: "  + angle);
                 Log.d("dist;", "dist conversion: "  + MAX_RADIUS_OFFSET*distance/curr_zoom_max);
