@@ -1,15 +1,8 @@
 package com.example.cse110_team2;
 
 import android.content.SharedPreferences;
-import android.util.Log;
-
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
-import java.lang.reflect.Array;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.List;
+
 
 public class FriendManager {
 
@@ -19,9 +12,12 @@ public class FriendManager {
 
     private ArrayList<User> mockFriends;
 
+    private User mainUser;
+
     public FriendManager(){
         friends = new ArrayList<User>(0);
         mockFriends = new ArrayList<User>(0);
+        mainUser = null;
     }
 
     public static FriendManager provide(){
@@ -62,6 +58,19 @@ public class FriendManager {
     public void loadFriendsFromSharedPreferences(SharedPreferences preferences){
         SharedCompassAPI api = SharedCompassAPI.provide();
         String text = preferences.getString("friends", "");
+        String userName = preferences.getString("user", "N/A");
+        String publicID = preferences.getString("publicID", "N/A");
+        String privateID = preferences.getString("privateID", "N/A");
+
+        User user = api.getUserAsync(publicID);
+        if(user != null) {
+            user.private_code = privateID;
+            user.name = userName;
+            if(mainUser ==null)
+                mainUser = user;
+        }
+
+
         friends = new ArrayList<User>(0);
 
         String [] uids = text.split(",");
@@ -87,5 +96,13 @@ public class FriendManager {
         for(int i = 0; i < friends.size(); i++){
             friends.set(i, api.getUserAsync(friends.get(i).uid));
         }
+    }
+
+    public void setMainUser(User user){
+        mainUser = user;
+    }
+
+    public User getMainUser(){
+        return mainUser;
     }
 }
