@@ -295,7 +295,7 @@ public void rotate(Float az, String uid) {
     }
 
     private void displayFriendName(String uid, double angle, double distance, Float az){
-        if (az == 0) { az = 0.0F; }
+        if (az == null) { az = 0.0F; }
         Float finalAz = az;
 
         runOnUiThread(new  Runnable()
