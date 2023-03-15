@@ -303,20 +303,20 @@ public void rotate(Float az, String uid) {
             public void run()
             {
                 double newAngle = 90 - 360 - angle;
+                newAngle = (finalAz + Math.toRadians(newAngle));
                 HashMap<String, View> friendViews = friendMap.get(uid);
                 View nameView = friendViews.get("text");
                 View dotView = friendViews.get("dot");
 //                MAX_DIST * distance/zoomManager.get_curr_zoom_max()
                 ConstraintLayout.LayoutParams nameLayout = (ConstraintLayout.LayoutParams) nameView.getLayoutParams();
-                int xShift = (int) (zoomManager.getRadius(distance) * Math.cos(Math.toRadians(newAngle)));
-                int yShift = (int) (zoomManager.getRadius(distance) * Math.sin(Math.toRadians(newAngle)));
+                int xShift = (int) (zoomManager.getRadius(distance) * Math.cos(newAngle));
+                int yShift = (int) (zoomManager.getRadius(distance) * Math.sin(newAngle));
                 Log.d("dist;", "dist: "  + distance);
                 Log.d("dist;", "angle: "  + newAngle);
                 Log.d("dist;", "dist conversion: "  + MAX_RADIUS_OFFSET*distance/zoomManager.get_curr_zoom_max());
                 Log.d("dist;", "xShift: "  + xShift);
                 Log.d("dist;", "yShift: "  + yShift);
                 nameLayout.setMargins(((ImageView) findViewById(R.id.compassImage)).getWidth()/2 + xShift,((ImageView) findViewById(R.id.compassImage)).getHeight()/2 - yShift,0,0);
-                nameLayout.circleAngle -= finalAz;
                 nameView.setLayoutParams(nameLayout);
                 dotView.setVisibility(View.INVISIBLE);
                 nameView.setVisibility(View.VISIBLE);
