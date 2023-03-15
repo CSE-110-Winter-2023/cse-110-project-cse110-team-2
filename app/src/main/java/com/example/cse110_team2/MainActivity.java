@@ -67,7 +67,6 @@ public class MainActivity extends AppCompatActivity {
         zoomManager = new ZoomManager();
         updateZoomButtons();
 
-//
         friendManager = FriendManager.provide();
         friendManager.loadFriendsFromSharedPreferences(preferences);
         layout = (ConstraintLayout)findViewById(R.id.compasslayout);
