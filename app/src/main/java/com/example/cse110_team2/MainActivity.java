@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.MutableLiveData;
 
 import android.Manifest;
 import android.content.Intent;
@@ -24,11 +25,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -71,16 +74,22 @@ public class MainActivity extends AppCompatActivity {
 
 //
         friendManager = FriendManager.provide();
-        layout = (ConstraintLayout) findViewById(R.id.compasslayout);
+        friendManager.loadFriendsFromSharedPreferences(preferences);
+        layout = (ConstraintLayout)findViewById(R.id.compasslayout);
 
         friendMap = new HashMap<String, HashMap<String, View>>();
         curr_zoom_max = 1;
+
+        orientationService = OrientationService.singleton(MainActivity.this);
+        orientationService.getOrientation().observe(this, azimuth -> {
+            updateFunctions(azimuth);
+        });
 
 
         var executor = Executors.newSingleThreadScheduledExecutor();
         ScheduledFuture<?> poller = executor.scheduleAtFixedRate(() -> {
             friendManager.updateFriendLocations();
-            updateFunctions();
+            updateFunctions(orientationService.getOrientation().getValue());
             updateLocationStatus();
         }, 0, 5, TimeUnit.SECONDS);
 
@@ -98,6 +107,7 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     myloc.setLon(location.getLongitude());
                     myloc.setLat(location.getLatitude());
+                    updateFunctions(orientationService.getOrientation().getValue());
                 }
 
                 //lon.setText("Longitude: " + String.valueOf(myloc.getLon()));
@@ -107,37 +117,35 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void setMock(boolean inMock) {
+    public void setMock(boolean inMock){
         this.inMock = inMock;
     }
 
-    public boolean getMock() {
+    public boolean getMock(){
         return this.inMock;
     }
 
-    public void updateFunctions() {
+    public void updateFunctions(Float az){
         //Might be necessary to calculate azimuth angle/zoom/etc
+        compassUpdate(az);
         updateCompassImage();
-        compassUpdate();
     }
-
 
     public void updateCompassImage(){
         int zoomAmount = zoomManager.getZoomAmount();
         switch(zoomAmount){
-            case 0: //TODO: add first image
+            case 0: ((ImageView) findViewById(R.id.compassImage)).setImageResource(R.drawable.zoom);
                     break;
-            case 1: //TODO: add second image
+            case 1: ((ImageView) findViewById(R.id.compassImage)).setImageResource(R.drawable.zoom1);
                     break;
-            case 2: //TODO: add third image
+            case 2: ((ImageView) findViewById(R.id.compassImage)).setImageResource(R.drawable.zoom2);
                     break;
-            case 3: //TODO: add fourth image
+            case 3: ((ImageView) findViewById(R.id.compassImage)).setImageResource(R.drawable.zoom3);
                     break;
         }
     }
 
-
-    public void compassUpdate() {
+    public void compassUpdate(Float az) {
         String name;
         String uid;
         float longitude;
@@ -162,21 +170,45 @@ public class MainActivity extends AppCompatActivity {
             double friend_distance = locationRelater.distanceCalculation(latitude, longitude);
             Log.d("friends", " " + friend_distance);
             Log.d("friends", " " + curr_zoom_max);
-            if (friend_distance < curr_zoom_max) {
+            if(friend_distance < curr_zoom_max){
                 displayFriendName(uid, point_angle, friend_distance);
             } else {
-                displayDotOnEdge(uid, point_angle);
+                displayDotOnEdge(uid,point_angle);
             }
             //TODO: Update friend name here with relative location (longitude and latitude)
+            rotate(az, uid);
         }
+        handleNameOverlap();
     }
 
+public void rotate(Float az, String uid) {
+        if (az == null) { az = 0.0F; }
+        Float finalAz = az;
+        runOnUiThread(new Runnable() {
+            public void run() {
 
-    private void upsertFriendMap(String uid, String name) {
 
+                HashMap<String, View> friendViews = friendMap.get(uid);
+                View nameView = friendViews.get("text");
+                View dotView = friendViews.get("dot");
+                ConstraintLayout.LayoutParams nameLayout = (ConstraintLayout.LayoutParams) nameView.getLayoutParams();
+                ConstraintLayout.LayoutParams dotLayout = (ConstraintLayout.LayoutParams) dotView.getLayoutParams();
+
+                nameLayout.circleAngle -= Math.toDegrees(finalAz);
+                dotLayout.circleAngle -= Math.toDegrees(finalAz);
+                nameView.setLayoutParams(nameLayout);
+                dotView.setLayoutParams(dotLayout);
+            }
+        });
+}
+
+
+    private void upsertFriendMap(String uid, String name){
         if (!friendMap.containsKey(uid)) {
-            runOnUiThread(new Runnable() {
-                public void run() {
+            runOnUiThread(new  Runnable()
+            {
+                public void run()
+                {
                     HashMap<String, View> viewMap = new HashMap<String, View>();
                     TextView nameView = new TextView(MainActivity.this);
                     ViewGroup.LayoutParams wrapParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
@@ -188,13 +220,13 @@ public class MainActivity extends AppCompatActivity {
                     layout.addView(nameView);
 
                     ImageView dotView = new ImageView(MainActivity.this);
-                    dotView.setImageResource(R.drawable.circle);
+                    dotView.setImageResource(R.drawable.redcircle);
                     dotView.setId(View.generateViewId());
                     dotView.setVisibility(View.INVISIBLE);
                     layout.addView(dotView);
                     ConstraintLayout.LayoutParams dotLayout = (ConstraintLayout.LayoutParams) dotView.getLayoutParams();
                     dotLayout.circleConstraint = R.id.compasslayout;
-                    dotLayout.circleRadius = ((ImageView) findViewById(R.id.compassImage)).getWidth() / 2 - MAX_RADIUS_OFFSET;
+                    dotLayout.circleRadius = ((ImageView) findViewById(R.id.compassImage)).getWidth()/2 - MAX_RADIUS_OFFSET;
                     dotLayout.circleAngle = 0;
                     dotLayout.width = 30;
                     dotLayout.height = 30;
@@ -263,6 +295,65 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private void handleNameOverlap(){
+        runOnUiThread(new Runnable()
+        {
+            public void run()
+            {
+                ImageView compass = (ImageView) findViewById(R.id.compassImage);
+                Log.d("timer", "Compass width: " + compass.getMeasuredWidth());
+                ArrayList<View> friendViews = new ArrayList<View>();
+                Log.d("timer", "calm");
+                friendMap.forEach((uid,view) -> {
+                    if (view.get("text").getVisibility() == View.VISIBLE) {
+                        friendViews.add(view.get("text"));
+                    }
+                });
+                friendViews.sort((v1,v2) -> (int)(v1.getX()-v2.getX()));
+                for (int i = 0; i< friendViews.size(); i++) {
+                    Log.d("timer", " NEW STUFF " + ((TextView)friendViews.get(i)).getText());
+                }
+                for(int i = 0; i < friendViews.size(); i++) {
+                    TextView view1 = (TextView)friendViews.get(i);
+                    view1.measure(0,0);
+                    while (view1.getText().length() > 0 && view1.getMeasuredWidth() + view1.getX() > ((ImageView)findViewById(R.id.compassImage)).getWidth()/2+Math.sqrt(Math.pow(MAX_DIST,2) - (Math.pow((double)(view1.getY()-((ImageView)findViewById(R.id.compassImage)).getHeight()/2),2)))){
+                        Log.d("math sin", "" + view1.getMeasuredWidth() + view1.getX());
+                        Log.d("math sin", "" + Math.sqrt(Math.pow(MAX_DIST,2) - (Math.pow((double)(view1.getY()-((ImageView)findViewById(R.id.compassImage)).getHeight()/2),2))));
+                        view1.setText(view1.getText().subSequence(0,view1.getText().length()-1));
+                        view1.measure(0,0);
+                    }
+                }
+                int i = 0;
+                while (i < friendViews.size()-1) {
+                    TextView view1 = (TextView)friendViews.get(i);
+                    view1.measure(0,0);
+                    TextView view2 = (TextView)friendViews.get(i+1);
+                    view2.measure(0,0);
+                    if (view1.getX() == 0.0 || view2.getX() == 0.0) {
+                        break;
+                    }
+                    if (view1.getX() == view2.getX() && view1.getY() == view2.getY()){
+                        view1.setText(view1.getText() + " & " + view2.getText());
+                        view2.setText("");
+                        friendViews.remove(i+1);
+                    }
+                    else if (view1.getY() <= view2.getY() && view1.getY()+view1.getMeasuredHeight() >= view2.getY()
+                            || view1.getY() <= view2.getY()+view2.getMeasuredHeight() && view1.getY()+view1.getMeasuredHeight() >= view2.getY()+view2.getMeasuredHeight()){
+                        while (view1.getMeasuredWidth() + view1.getX() > view2.getX() && view1.getText().length() > 0){
+                            Log.d("timer", i + "  " + view1.getText() + "  ,   " + view2.getText());
+                            view1.setText(view1.getText().subSequence(0,view1.getText().length()-1));
+                            view1.measure(0,0);
+                        }
+                    }
+                    Log.d("timer", i + "  " + view1.getX());
+                    Log.d("timer", i + "  " + view2.getMeasuredWidth());
+                    i++;
+                }
+            }
+        });
+    }
+
+
 
     private void displayDotOnEdge(String uid, double angle){
         runOnUiThread(new  Runnable()
@@ -316,9 +407,27 @@ public class MainActivity extends AppCompatActivity {
     public void mockAddFriend(User user) {
         this.friendManager.addFriend(user);
     }
-        //firstLocUpdate = false;
 
+    public void setOrientationMock(MutableLiveData<Float> ld) {
+        orientationService.setMockOrientationSource(ld);
+    }
 
+    public void mockCompassUpdate() {
+        float az = this.orientationService.getOrientation().getValue();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        orientationService.unregisterSensorListeners();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        orientationService = OrientationService.singleton(this);
+        orientationService.registerSensorListeners();
+    }
 /*
 //
 //
@@ -631,13 +740,13 @@ public class MainActivity extends AppCompatActivity {
     public void zoomInClicked(View view){
         zoomManager.zoomIn();
         updateZoomButtons();
-        updateFunctions();
+        updateCompassImage();
 //        Log.d("PRINTING TEST:", "Zoom in");
     }
     public void zoomOutClicked(View view){
         zoomManager.zoomOut();
         updateZoomButtons();
-        updateFunctions();
+        updateCompassImage();
 //        Log.d("PRINTING TEST:", "Zoom out");
 
     }
