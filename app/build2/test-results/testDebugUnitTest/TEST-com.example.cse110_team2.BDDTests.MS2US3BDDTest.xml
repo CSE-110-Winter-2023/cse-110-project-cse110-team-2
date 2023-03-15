@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.example.cse110_team2.BDDTests.MS2US3BDDTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2023-03-14T21:31:11" hostname="Sids-MacBook-Air.local" time="3.116">
-  <properties/>
-  <testcase name="us3_bdd1_test" classname="com.example.cse110_team2.BDDTests.MS2US3BDDTest" time="3.116"/>
-  <system-out><![CDATA[]]></system-out>
-  <system-err><![CDATA[[WARN] Unknown chunk type '200'.
-]]></system-err>
-</testsuite>
