@@ -23,6 +23,7 @@ import android.util.Log;
 
 import java.util.ArrayList;
 
+
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -136,14 +137,14 @@ public class MainActivity extends AppCompatActivity {
     public void updateCompassImage(){
         int zoomAmount = zoomManager.getZoomAmount();
         switch(zoomAmount){
-            case 0: //TODO: add first image
-                break;
-            case 1: //TODO: add second image
-                break;
-            case 2: //TODO: add third image
-                break;
-            case 3: //TODO: add fourth image
-                break;
+            case 0: ((ImageView) findViewById(R.id.compassImage)).setImageResource(R.drawable.zoom);
+                    break;
+            case 1: ((ImageView) findViewById(R.id.compassImage)).setImageResource(R.drawable.zoom1);
+                    break;
+            case 2: ((ImageView) findViewById(R.id.compassImage)).setImageResource(R.drawable.zoom2);
+                    break;
+            case 3: ((ImageView) findViewById(R.id.compassImage)).setImageResource(R.drawable.zoom3);
+                    break;
         }
     }
 
