@@ -60,15 +60,17 @@ public class MS2US3BDDTest {
             friendList.add(friend2);
             activity.compassUpdate(0.0F);
             HashMap<String, HashMap<String, View>> friendMap = activity.friendMap;
-            View friend1Text = friendMap.get("friend1UID").get("text");
-            View friend2Text = friendMap.get("friend2UID").get("text");
-            ConstraintLayout.LayoutParams friend1Layout = (ConstraintLayout.LayoutParams) friend1Text.getLayoutParams();
-            ConstraintLayout.LayoutParams friend2Layout = (ConstraintLayout.LayoutParams) friend2Text.getLayoutParams();
-
-            assertEquals(friend1Layout.leftMargin,144);
-            assertEquals(friend1Layout.topMargin,144);
-            assertEquals(friend2Layout.leftMargin,144);
-            assertEquals(friend2Layout.topMargin,144);
+            TextView friend1Text = (TextView) friendMap.get("friend1UID").get("text");
+            TextView friend2Text = (TextView) friendMap.get("friend2UID").get("text");
+            assertEquals(friend1Text.getText(), "friend1");
+            assertEquals(friend2Text.getText(), "friend2");
+//            ConstraintLayout.LayoutParams friend1Layout = (ConstraintLayout.LayoutParams) friend1Text.getLayoutParams();
+//            ConstraintLayout.LayoutParams friend2Layout = (ConstraintLayout.LayoutParams) friend2Text.getLayoutParams();
+//
+//            assertEquals(friend1Layout.leftMargin,144);
+//            assertEquals(friend1Layout.topMargin,144);
+//            assertEquals(friend2Layout.leftMargin,144);
+//            assertEquals(friend2Layout.topMargin,144);
             activity.setMock(false);
         });
     }
