@@ -399,6 +399,7 @@ public void rotate(Float az, String uid) {
                 View dotView = friendViews.get("dot");
                 ConstraintLayout.LayoutParams dotLayout = (ConstraintLayout.LayoutParams) dotView.getLayoutParams();
                 dotLayout.circleAngle = (float) angle;
+                dotLayout.circleRadius = (int) zoomManager.getCompassWidth()/2;
                 dotView.setLayoutParams(dotLayout);
                 nameView.setVisibility(View.INVISIBLE);
                 dotView.setVisibility(View.VISIBLE);
