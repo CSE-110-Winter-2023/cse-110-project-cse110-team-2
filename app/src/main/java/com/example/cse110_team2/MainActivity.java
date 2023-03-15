@@ -49,10 +49,8 @@ public class MainActivity extends AppCompatActivity {
     private MyLocation myloc;
     private ConstraintLayout layout;
     private ZoomManager zoomManager;
-
     private boolean inMock;
     public HashMap<String, HashMap<String, View>> friendMap;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,7 +63,6 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(this, InputNameActivity.class);
             startActivity(intent);
         }
-
         myloc = new MyLocation(-117, 34);
         locationRelater = new PointRelation(myloc);
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
@@ -84,7 +81,6 @@ public class MainActivity extends AppCompatActivity {
         orientationService.getOrientation().observe(this, azimuth -> {
             updateFunctions(azimuth);
         });
-
 
         var executor = Executors.newSingleThreadScheduledExecutor();
         ScheduledFuture<?> poller = executor.scheduleAtFixedRate(() -> {
@@ -116,7 +112,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
-
     public void setMock(boolean inMock){
         this.inMock = inMock;
     }
@@ -240,6 +235,7 @@ public void rotate(Float az, String uid) {
     }
 
     public void updateLocationStatus() {
+
         if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION}, 1);
@@ -367,6 +363,39 @@ public void rotate(Float az, String uid) {
         super.onResume();
         orientationService = OrientationService.singleton(this);
         orientationService.registerSensorListeners();
+    }
+
+    public void onAddFriendClicked(View view) {
+        Intent intent = new Intent(this, AddFriendsActivity.class);
+        startActivity(intent);
+
+    }
+
+    public void zoomInClicked(View view){
+        zoomManager.zoomIn();
+        updateZoomButtons();
+        updateCompassImage();
+//        Log.d("PRINTING TEST:", "Zoom in");
+    }
+    public void zoomOutClicked(View view){
+        zoomManager.zoomOut();
+        updateZoomButtons();
+        updateCompassImage();
+//        Log.d("PRINTING TEST:", "Zoom out");
+
+    }
+
+    private void updateZoomButtons(){
+        Button zoomInBtn = (Button) findViewById(R.id.zoomIn);
+        Button zoomOutBtn = (Button) findViewById(R.id.zoomOut);
+
+        boolean canZoomIn = zoomManager.canZoomIn();
+        boolean canZoomOut = zoomManager.canZoomOut();
+
+        zoomInBtn.setEnabled(canZoomIn);
+        zoomOutBtn.setEnabled(canZoomOut);
+
+
     }
 /*
 //
@@ -671,38 +700,6 @@ public void rotate(Float az, String uid) {
 
 
 
-    public void onAddFriendClicked(View view) {
-        Intent intent = new Intent(this, AddFriendsActivity.class);
-        startActivity(intent);
-
-    }
-
-    public void zoomInClicked(View view){
-        zoomManager.zoomIn();
-        updateZoomButtons();
-        updateCompassImage();
-//        Log.d("PRINTING TEST:", "Zoom in");
-    }
-    public void zoomOutClicked(View view){
-        zoomManager.zoomOut();
-        updateZoomButtons();
-        updateCompassImage();
-//        Log.d("PRINTING TEST:", "Zoom out");
-
-    }
-
-    private void updateZoomButtons(){
-        Button zoomInBtn = (Button) findViewById(R.id.zoomIn);
-        Button zoomOutBtn = (Button) findViewById(R.id.zoomOut);
-
-        boolean canZoomIn = zoomManager.canZoomIn();
-        boolean canZoomOut = zoomManager.canZoomOut();
-
-        zoomInBtn.setEnabled(canZoomIn);
-        zoomOutBtn.setEnabled(canZoomOut);
-
-
-    }
 }
 
 

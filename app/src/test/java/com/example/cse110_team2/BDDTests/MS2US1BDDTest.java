@@ -5,6 +5,7 @@ import static org.robolectric.Shadows.shadowOf;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.util.Log;
 import android.widget.TextView;
 
 
