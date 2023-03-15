@@ -302,7 +302,7 @@ public void rotate(Float az, String uid) {
         {
             public void run()
             {
-                double newAngle = 90 - 360 - angle - finalAz;
+                double newAngle = 90 - 360 - angle;
                 HashMap<String, View> friendViews = friendMap.get(uid);
                 View nameView = friendViews.get("text");
                 View dotView = friendViews.get("dot");
@@ -316,6 +316,7 @@ public void rotate(Float az, String uid) {
                 Log.d("dist;", "xShift: "  + xShift);
                 Log.d("dist;", "yShift: "  + yShift);
                 nameLayout.setMargins(((ImageView) findViewById(R.id.compassImage)).getWidth()/2 + xShift,((ImageView) findViewById(R.id.compassImage)).getHeight()/2 - yShift,0,0);
+                nameLayout.circleAngle -= finalAz;
                 nameView.setLayoutParams(nameLayout);
                 dotView.setVisibility(View.INVISIBLE);
                 nameView.setVisibility(View.VISIBLE);
