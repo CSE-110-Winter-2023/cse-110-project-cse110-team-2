@@ -256,7 +256,7 @@ public void rotate(Float az, String uid) {
                     layout.addView(dotView);
                     ConstraintLayout.LayoutParams dotLayout = (ConstraintLayout.LayoutParams) dotView.getLayoutParams();
                     dotLayout.circleConstraint = R.id.compasslayout;
-                    Log.d("GETTING RADIUS", "" + zoomManager.getCompassWidth()/2);
+                    Log.d("DOT-ON-EDGE", "" + zoomManager.getCompassWidth()/2);
                     dotLayout.circleRadius = (int) zoomManager.getCompassWidth()/2;
                     dotLayout.circleAngle = 0;
                     dotLayout.width = 30;
@@ -399,6 +399,7 @@ public void rotate(Float az, String uid) {
                 View dotView = friendViews.get("dot");
                 ConstraintLayout.LayoutParams dotLayout = (ConstraintLayout.LayoutParams) dotView.getLayoutParams();
                 dotLayout.circleAngle = (float) angle;
+                dotLayout.circleRadius = (int) zoomManager.getCompassWidth()/2;
                 dotView.setLayoutParams(dotLayout);
                 nameView.setVisibility(View.INVISIBLE);
                 dotView.setVisibility(View.VISIBLE);

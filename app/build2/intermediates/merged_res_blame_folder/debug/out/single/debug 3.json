@@ -1,0 +1,118 @@
+[
+    {
+        "merged": "/Users/Sid/.gradle/daemon/7.4/com.example.cse110_team2.app-merged_res-29:/drawable_redcircle.png.flat",
+        "source": "/Users/Sid/.gradle/daemon/7.4/com.example.cse110_team2.app-main-31:/drawable/redcircle.png"
+    },
+    {
+        "merged": "/Users/Sid/.gradle/daemon/7.4/com.example.cse110_team2.app-merged_res-29:/mipmap-mdpi_ic_launcher_round.webp.flat",
+        "source": "/Users/Sid/.gradle/daemon/7.4/com.example.cse110_team2.app-main-31:/mipmap-mdpi/ic_launcher_round.webp"
+    },
+    {
+        "merged": "/Users/Sid/.gradle/daemon/7.4/com.example.cse110_team2.app-merged_res-29:/layout_activity_input_location.xml.flat",
+        "source": "/Users/Sid/.gradle/daemon/7.4/com.example.cse110_team2.app-main-31:/layout/activity_input_location.xml"
+    },
+    {
+        "merged": "/Users/Sid/.gradle/daemon/7.4/com.example.cse110_team2.app-merged_res-29:/drawable_ic_launcher_background.xml.flat",
+        "source": "/Users/Sid/.gradle/daemon/7.4/com.example.cse110_team2.app-main-31:/drawable/ic_launcher_background.xml"
+    },
+    {
+        "merged": "/Users/Sid/.gradle/daemon/7.4/com.example.cse110_team2.app-merged_res-29:/mipmap-xhdpi_ic_launcher.webp.flat",
+        "source": "/Users/Sid/.gradle/daemon/7.4/com.example.cse110_team2.app-main-31:/mipmap-xhdpi/ic_launcher.webp"
+    },
+    {
+        "merged": "/Users/Sid/.gradle/daemon/7.4/com.example.cse110_team2.app-merged_res-29:/mipmap-xhdpi_ic_launcher_round.webp.flat",
+        "source": "/Users/Sid/.gradle/daemon/7.4/com.example.cse110_team2.app-main-31:/mipmap-xhdpi/ic_launcher_round.webp"
+    },
+    {
+        "merged": "/Users/Sid/.gradle/daemon/7.4/com.example.cse110_team2.app-merged_res-29:/mipmap-xxxhdpi_ic_launcher_round.webp.flat",
+        "source": "/Users/Sid/.gradle/daemon/7.4/com.example.cse110_team2.app-main-31:/mipmap-xxxhdpi/ic_launcher_round.webp"
+    },
+    {
+        "merged": "/Users/Sid/.gradle/daemon/7.4/com.example.cse110_team2.app-merged_res-29:/drawable_zoom2.png.flat",
+        "source": "/Users/Sid/.gradle/daemon/7.4/com.example.cse110_team2.app-main-31:/drawable/zoom2.png"
+    },
+    {
+        "merged": "/Users/Sid/.gradle/daemon/7.4/com.example.cse110_team2.app-merged_res-29:/mipmap-xxhdpi_ic_launcher.webp.flat",
+        "source": "/Users/Sid/.gradle/daemon/7.4/com.example.cse110_team2.app-main-31:/mipmap-xxhdpi/ic_launcher.webp"
+    },
+    {
+        "merged": "/Users/Sid/.gradle/daemon/7.4/com.example.cse110_team2.app-merged_res-29:/drawable_yellowcircle.png.flat",
+        "source": "/Users/Sid/.gradle/daemon/7.4/com.example.cse110_team2.app-main-31:/drawable/yellowcircle.png"
+    },
+    {
+        "merged": "/Users/Sid/.gradle/daemon/7.4/com.example.cse110_team2.app-merged_res-29:/mipmap-hdpi_ic_launcher_round.webp.flat",
+        "source": "/Users/Sid/.gradle/daemon/7.4/com.example.cse110_team2.app-main-31:/mipmap-hdpi/ic_launcher_round.webp"
+    },
+    {
+        "merged": "com.example.cse110_team2.app-merged_res-29:/layout_activity_main.xml.flat",
+        "source": "com.example.cse110_team2.app-main-31:/layout/activity_main.xml"
+    },
+    {
+        "merged": "/Users/Sid/.gradle/daemon/7.4/com.example.cse110_team2.app-merged_res-29:/drawable_compass.png.flat",
+        "source": "/Users/Sid/.gradle/daemon/7.4/com.example.cse110_team2.app-main-31:/drawable/compass.png"
+    },
+    {
+        "merged": "/Users/Sid/.gradle/daemon/7.4/com.example.cse110_team2.app-merged_res-29:/mipmap-xxxhdpi_ic_launcher.webp.flat",
+        "source": "/Users/Sid/.gradle/daemon/7.4/com.example.cse110_team2.app-main-31:/mipmap-xxxhdpi/ic_launcher.webp"
+    },
+    {
+        "merged": "/Users/Sid/.gradle/daemon/7.4/com.example.cse110_team2.app-merged_res-29:/layout_activity_input_name.xml.flat",
+        "source": "/Users/Sid/.gradle/daemon/7.4/com.example.cse110_team2.app-main-31:/layout/activity_input_name.xml"
+    },
+    {
+        "merged": "/Users/Sid/.gradle/daemon/7.4/com.example.cse110_team2.app-merged_res-29:/xml_data_extraction_rules.xml.flat",
+        "source": "/Users/Sid/.gradle/daemon/7.4/com.example.cse110_team2.app-main-31:/xml/data_extraction_rules.xml"
+    },
+    {
+        "merged": "/Users/Sid/.gradle/daemon/7.4/com.example.cse110_team2.app-merged_res-29:/mipmap-anydpi-v26_ic_launcher.xml.flat",
+        "source": "/Users/Sid/.gradle/daemon/7.4/com.example.cse110_team2.app-main-31:/mipmap-anydpi-v26/ic_launcher.xml"
+    },
+    {
+        "merged": "/Users/Sid/.gradle/daemon/7.4/com.example.cse110_team2.app-merged_res-29:/drawable_zoom.png.flat",
+        "source": "/Users/Sid/.gradle/daemon/7.4/com.example.cse110_team2.app-main-31:/drawable/zoom.png"
+    },
+    {
+        "merged": "/Users/Sid/.gradle/daemon/7.4/com.example.cse110_team2.app-merged_res-29:/mipmap-anydpi-v26_ic_launcher_round.xml.flat",
+        "source": "/Users/Sid/.gradle/daemon/7.4/com.example.cse110_team2.app-main-31:/mipmap-anydpi-v26/ic_launcher_round.xml"
+    },
+    {
+        "merged": "/Users/Sid/.gradle/daemon/7.4/com.example.cse110_team2.app-merged_res-29:/drawable_zoom1.png.flat",
+        "source": "/Users/Sid/.gradle/daemon/7.4/com.example.cse110_team2.app-main-31:/drawable/zoom1.png"
+    },
+    {
+        "merged": "/Users/Sid/.gradle/daemon/7.4/com.example.cse110_team2.app-merged_res-29:/mipmap-mdpi_ic_launcher.webp.flat",
+        "source": "/Users/Sid/.gradle/daemon/7.4/com.example.cse110_team2.app-main-31:/mipmap-mdpi/ic_launcher.webp"
+    },
+    {
+        "merged": "/Users/Sid/.gradle/daemon/7.4/com.example.cse110_team2.app-merged_res-29:/layout_activity_main.xml.flat",
+        "source": "/Users/Sid/.gradle/daemon/7.4/com.example.cse110_team2.app-main-31:/layout/activity_main.xml"
+    },
+    {
+        "merged": "/Users/Sid/.gradle/daemon/7.4/com.example.cse110_team2.app-merged_res-29:/layout_activity_add_friends.xml.flat",
+        "source": "/Users/Sid/.gradle/daemon/7.4/com.example.cse110_team2.app-main-31:/layout/activity_add_friends.xml"
+    },
+    {
+        "merged": "/Users/Sid/.gradle/daemon/7.4/com.example.cse110_team2.app-merged_res-29:/drawable_bluecircle.png.flat",
+        "source": "/Users/Sid/.gradle/daemon/7.4/com.example.cse110_team2.app-main-31:/drawable/bluecircle.png"
+    },
+    {
+        "merged": "/Users/Sid/.gradle/daemon/7.4/com.example.cse110_team2.app-merged_res-29:/mipmap-hdpi_ic_launcher.webp.flat",
+        "source": "/Users/Sid/.gradle/daemon/7.4/com.example.cse110_team2.app-main-31:/mipmap-hdpi/ic_launcher.webp"
+    },
+    {
+        "merged": "/Users/Sid/.gradle/daemon/7.4/com.example.cse110_team2.app-merged_res-29:/drawable_zoom3.png.flat",
+        "source": "/Users/Sid/.gradle/daemon/7.4/com.example.cse110_team2.app-main-31:/drawable/zoom3.png"
+    },
+    {
+        "merged": "/Users/Sid/.gradle/daemon/7.4/com.example.cse110_team2.app-merged_res-29:/mipmap-xxhdpi_ic_launcher_round.webp.flat",
+        "source": "/Users/Sid/.gradle/daemon/7.4/com.example.cse110_team2.app-main-31:/mipmap-xxhdpi/ic_launcher_round.webp"
+    },
+    {
+        "merged": "/Users/Sid/.gradle/daemon/7.4/com.example.cse110_team2.app-merged_res-29:/drawable-v24_ic_launcher_foreground.xml.flat",
+        "source": "/Users/Sid/.gradle/daemon/7.4/com.example.cse110_team2.app-main-31:/drawable-v24/ic_launcher_foreground.xml"
+    },
+    {
+        "merged": "/Users/Sid/.gradle/daemon/7.4/com.example.cse110_team2.app-merged_res-29:/xml_backup_rules.xml.flat",
+        "source": "/Users/Sid/.gradle/daemon/7.4/com.example.cse110_team2.app-main-31:/xml/backup_rules.xml"
+    }
+]
