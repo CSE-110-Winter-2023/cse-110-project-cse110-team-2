@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -31,11 +32,10 @@ public class AddFriendsActivity extends AppCompatActivity {
         TextView id = (TextView)findViewById(R.id.friendID);
         SharedPreferences preferences = getSharedPreferences("IDvalue", 0);
         User friend = api.getUserAsync(id.getText().toString());
-
-        friendManager.addFriend(friend);
-        friendManager.saveFriendsToSharedPreferences(preferences);
-
-
+        if (friend.name != null) {
+            friendManager.addFriend(friend);
+            friendManager.saveFriendsToSharedPreferences(preferences);
+        }
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
         finish();
