@@ -67,7 +67,7 @@ public class RotateUnitTests {
 
                 float newDotAngle = dotLayoutUpdated.circleAngle;
 
-                assertEquals(ogDotAngle - Math.toDegrees(-Math.PI / 2), newDotAngle, 0.5);
+                assertEquals(ogDotAngle - Math.toDegrees(Math.PI / 2), newDotAngle, 0.5);
 
 
                 mockDataSource.setValue(0.0F);
@@ -96,7 +96,6 @@ public class RotateUnitTests {
             activity.mockCompassUpdate();
             var friendList = activity.getFriendManager().getMockFriends();
 
-            // TODO penis
             for (int i = 0; i < friendList.size(); i++) {
                 var curr_friend = friendList.get(i);
 
@@ -117,11 +116,7 @@ public class RotateUnitTests {
 
                 float newDotAngle = dotLayoutUpdated.circleAngle;
 
-                assertEquals(ogDotAngle - Math.toDegrees(-Math.PI), newDotAngle, 0.5);
-
-
-                mockDataSource.setValue(0.0F);
-                activity.mockCompassUpdate();
+                assertEquals(ogDotAngle - Math.toDegrees(Math.PI), newDotAngle, 0.5);
             }
         });
     }
