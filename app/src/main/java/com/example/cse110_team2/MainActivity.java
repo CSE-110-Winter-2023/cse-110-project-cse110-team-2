@@ -198,7 +198,7 @@ public class MainActivity extends AppCompatActivity {
             //TODO: Update friend name here with relative location (longitude and latitude)
             rotate(az, uid);
         }
-    //    handleNameOverlap();
+        handleNameOverlap();
     }
 
 public void rotate(Float az, String uid) {
@@ -373,6 +373,7 @@ public void rotate(Float az, String uid) {
                         view1.setText(view1.getText() + " & " + view2.getText());
                         view2.setText("");
                         friendViews.remove(i+1);
+                        continue;
                     }
                     else if (view1.getY() <= view2.getY() && view1.getY()+view1.getMeasuredHeight() >= view2.getY()
                             || view1.getY() <= view2.getY()+view2.getMeasuredHeight() && view1.getY()+view1.getMeasuredHeight() >= view2.getY()+view2.getMeasuredHeight()){
@@ -381,8 +382,9 @@ public void rotate(Float az, String uid) {
                             view1.setText(view1.getText().subSequence(0,view1.getText().length()-1));
                             view1.measure(0,0);
                         }
-                        i++;
+
                     }
+                    i++;
                 }
             }
         });
