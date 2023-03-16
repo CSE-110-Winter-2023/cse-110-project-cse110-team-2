@@ -1,6 +1,8 @@
 package com.example.cse110_team2;
 
 import android.content.SharedPreferences;
+import android.util.Log;
+
 import java.util.ArrayList;
 
 
@@ -39,6 +41,7 @@ public class FriendManager {
     }
 
     public ArrayList<User> getFriends(){
+        Log.d("CLICK 3", "friend length " + friends.size());
         return friends;
     }
     public ArrayList<User> getMockFriends(){
@@ -47,6 +50,7 @@ public class FriendManager {
 
     public void addFriend(User user){
         // check if friend already exists
+        Log.d("CLICK FRIEND MANAGER", "user added" + user.name);
         boolean existsFlag = false;
         for (User us : this.getFriends()) {
             if (us.uid.equals(user.uid)) { existsFlag = true; }
@@ -62,8 +66,10 @@ public class FriendManager {
         String publicID = preferences.getString("publicID", "N/A");
         String privateID = preferences.getString("privateID", "N/A");
 
+//        Log.d("CLICK", "checking publicID " + publicID);
         User user = api.getUserAsync(publicID);
-        if(user != null) {
+//        Log.d("CLICK", "checking USER " + user.uid + "  " + user.name);
+        if(user.name != null) {
             user.private_code = privateID;
             user.name = userName;
             if(mainUser ==null)
@@ -72,12 +78,18 @@ public class FriendManager {
 
 
         friends = new ArrayList<User>(0);
-
-        String [] uids = text.split(",");
-
-        for(int i =0; i < uids.length; i++){
-            friends.add(api.getUserAsync(uids[i]));
+        if(text.length() > 0) {
+//            Log.d("CLICK 4", "in get data from shared prefs");
+//            Log.d("CLICK 4", "length " + friends.size());
+//            Log.d("CLICK 11", "text  _+ text " + text + "   " + text.length());
+            String[] uids = text.split(",");
+//            Log.d("CLICK 10", "length: " + uids.length);
+            for (int i = 0; i < uids.length; i++) {
+                friends.add(api.getUserAsync(uids[i]));
+            }
+//            Log.d("CLICK 5", "length " + friends.size());
         }
+
     }
 
     public void saveFriendsToSharedPreferences(SharedPreferences preferences){

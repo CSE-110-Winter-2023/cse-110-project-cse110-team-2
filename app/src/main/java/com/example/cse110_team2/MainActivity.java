@@ -152,6 +152,7 @@ public class MainActivity extends AppCompatActivity {
         float latitude;
         User curr_friend;
         ArrayList<User> friendList = friendManager.getFriends();
+        Log.d("CLICK 2", "friend list length " + friendList.size());
 //        User us1 = new User("tomo", "thissirandom", (float)-110.3, (float)50.3, "hello");
 ////        37.3064, -121.9967
 //        User us2 = new User("john", "thissirandom22", (float)-121.9964, (float)37.3064, "hello123");
@@ -451,12 +452,14 @@ public void rotate(Float az, String uid) {
         zoomManager.zoomIn();
         updateZoomButtons();
         updateCompassImage();
+        updateLocationStatus();
 //        Log.d("PRINTING TEST:", "Zoom in");
     }
     public void zoomOutClicked(View view){
         zoomManager.zoomOut();
         updateZoomButtons();
         updateCompassImage();
+        updateLocationStatus();
 //        Log.d("PRINTING TEST:", "Zoom out");
 
     }
