@@ -20,6 +20,7 @@ public class InputNameActivity extends AppCompatActivity {
     }
     public void onNameSaveBtnClicked(View view) {
 
+        FriendManager fm = FriendManager.provide();
         SharedPreferences preferences = getSharedPreferences("IDvalue", 0);
         SharedPreferences.Editor editor = preferences.edit();
         String publicID = UUID.randomUUID().toString();
@@ -37,6 +38,7 @@ public class InputNameActivity extends AppCompatActivity {
             editor.apply();
             Log.d("debug",publicID);
             User user = User.createUser(newName,publicID,privateID);
+            fm.setMainUser(user);
             Intent intent = new Intent(this, AddFriendsActivity.class);
             startActivity(intent);
 

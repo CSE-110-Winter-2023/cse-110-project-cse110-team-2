@@ -24,29 +24,21 @@ import android.os.Bundle;
 import android.util.Log;
 
 import java.util.ArrayList;
-
-
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
-    private int counter = 0;
     private LocationManager locationManager;
     private FriendManager friendManager;
     private PointRelation locationRelater;
     private OrientationService orientationService;
-    private boolean firstLocUpdate;
     private final int MAX_RADIUS_OFFSET = 70;
 
     private final int MAX_DIST = 430;
@@ -54,10 +46,8 @@ public class MainActivity extends AppCompatActivity {
     private MyLocation myloc;
     private ConstraintLayout layout;
     private ZoomManager zoomManager;
-
     private boolean inMock;
     public HashMap<String, HashMap<String, View>> friendMap;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,12 +55,11 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences preferences = getSharedPreferences("IDvalue", 0);
         inMock = false;
         String name = preferences.getString("user", "N/A");
-        if (name == "N/A") {
+        if (name.equals("N/A")) {
             Log.d("debug", name);
             Intent intent = new Intent(this, InputNameActivity.class);
             startActivity(intent);
         }
-
         myloc = new MyLocation(-117, 34);
         locationRelater = new PointRelation(myloc);
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
@@ -78,7 +67,6 @@ public class MainActivity extends AppCompatActivity {
         zoomManager = new ZoomManager();
         updateZoomButtons();
 
-//
         friendManager = FriendManager.provide();
         friendManager.loadFriendsFromSharedPreferences(preferences);
         layout = (ConstraintLayout)findViewById(R.id.compasslayout);
@@ -89,7 +77,6 @@ public class MainActivity extends AppCompatActivity {
         orientationService.getOrientation().observe(this, azimuth -> {
             updateFunctions(azimuth);
         });
-
 
         var executor = Executors.newSingleThreadScheduledExecutor();
         ScheduledFuture<?> poller = executor.scheduleAtFixedRate(() -> {
@@ -105,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10, 1, new LocationListener() {
             @Override
             public void onLocationChanged(@NonNull Location location) {
-                firstLocUpdate = true;
+                Log.i("location", "onLocationChanged");
                 if (inMock) {
                     myloc.setLon(-117);
                     myloc.setLat(34);
@@ -115,13 +102,15 @@ public class MainActivity extends AppCompatActivity {
                     updateFunctions(orientationService.getOrientation().getValue());
                 }
 
-                //lon.setText("Longitude: " + String.valueOf(myloc.getLon()));
-                //lat.setText("Latitude: " + String.valueOf(myloc.getLat()));
+                User mainUser = friendManager.getMainUser();
+                mainUser.setLatitude((float)myloc.getLat());
+                mainUser.setLongitude((float) myloc.getLon());
+                SharedCompassAPI api = SharedCompassAPI.provide();
+                api.updateUserLocationAsync(mainUser);
             }
         });
 
     }
-
     public void setMock(boolean inMock){
         this.inMock = inMock;
     }
@@ -272,6 +261,7 @@ public void rotate(Float az, String uid) {
     }
 
     public void updateLocationStatus() {
+
         if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION}, 1);
@@ -355,16 +345,33 @@ public void rotate(Float az, String uid) {
                         view1.measure(0,0);
                     }
                 }
+                for (int i = 0; i< friendViews.size(); i++) {
+                    Log.d("NEW TIMERS TUFF", " NEW STUFF " + ((TextView)friendViews.get(i)).getText());
+                }
                 int i = 0;
                 while (i < friendViews.size()-1) {
                     TextView view1 = (TextView)friendViews.get(i);
                     view1.measure(0,0);
                     TextView view2 = (TextView)friendViews.get(i+1);
                     view2.measure(0,0);
+                    Log.d("upsert friend name", "name1"+ i + "  "  + view1.getText());
+                    Log.d("upsert friend name", "name2"+ (int)(i+1) + "  "  + view2.getText());
+
                     if (view1.getX() == 0.0 || view2.getX() == 0.0) {
                         break;
                     }
-                    if (view1.getX() == view2.getX() && view1.getY() == view2.getY()){
+                    if (view1.getText() == ""){
+                        friendViews.remove(i);
+                        continue;
+                    }
+                    if (view2.getText() == ""){
+                        friendViews.remove(i+1);
+                        continue;
+                    }
+                    if (Math.abs(view1.getX()-view2.getX()) < 5  && Math.abs(view1.getY()-view2.getY()) < 5){
+                        Log.d("upsert friend name", "In Combine view");
+                        Log.d("upsert friend name", "name1: " + view1.getText());
+                        Log.d("upsert friend name", "name2: " + view2.getText());
                         view1.setText(view1.getText() + " & " + view2.getText());
                         view2.setText("");
                         friendViews.remove(i+1);
@@ -376,10 +383,8 @@ public void rotate(Float az, String uid) {
                             view1.setText(view1.getText().subSequence(0,view1.getText().length()-1));
                             view1.measure(0,0);
                         }
+                        i++;
                     }
-                    Log.d("timer", i + "  " + view1.getX());
-                    Log.d("timer", i + "  " + view2.getMeasuredWidth());
-                    i++;
                 }
             }
         });
@@ -403,37 +408,11 @@ public void rotate(Float az, String uid) {
                 dotView.setLayoutParams(dotLayout);
                 nameView.setVisibility(View.INVISIBLE);
                 dotView.setVisibility(View.VISIBLE);
-
-//                counter += 1;
-//                ImageView iv = new ImageView(MainActivity.this);
-//                iv.setImageResource(R.drawable.redcircle);
-//                iv.setId(View.generateViewId());
-//                layout.addView(iv);
-//
-//                ConstraintLayout.LayoutParams lp = (ConstraintLayout.LayoutParams) iv.getLayoutParams();
-//                lp.circleConstraint = R.id.compasslayout;
-//                lp.circleRadius = ((ImageView) findViewById(R.id.compassImage)).getWidth()/2 - MAX_RADIUS_OFFSET;
-//                lp.circleAngle = (float) angle;
-//                lp.width = 30;
-//                lp.height = 30;
-//                iv.setLayoutParams(lp);
             }
         });
 
     }
 
-//    private void setCircleRadius(ImageView circle, int radius) {
-//        ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) circle.getLayoutParams();
-//        layoutParams.circleRadius = radius;
-//        circle.setLayoutParams(layoutParams);
-//    }
-//
-//    private void setCircleSize(ImageView circle, int size) {
-//        ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) circle.getLayoutParams();
-//        layoutParams.width = size;
-//        layoutParams.height = size;
-//        circle.setLayoutParams(layoutParams);
-//    }
 
     public FriendManager getFriendManager() {
         return this.friendManager;
@@ -463,308 +442,6 @@ public void rotate(Float az, String uid) {
         orientationService = OrientationService.singleton(this);
         orientationService.registerSensorListeners();
     }
-/*
-//
-//
-//        orientationService = OrientationService.singleton(MainActivity.this);
-//        orientationService.getOrientation().observe(this, azimuth -> {
-//            compassUpdate(azimuth);
-//        });
-//
-//        myloc = new MyLocation(0, 0);
-//        locationRelater = new PointRelation(myloc);
-//        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-//
-//        if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-//                ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-//            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION}, 1);
-//        }
-//        ImageView redCircle = (ImageView) findViewById(R.id.redImage);
-//        ImageView blueCircle = (ImageView) findViewById(R.id.blueImage);
-//        ImageView yellowCircle = (ImageView) findViewById(R.id.yellowImage);
-//        redCircle.setVisibility(View.INVISIBLE);
-//        blueCircle.setVisibility(View.INVISIBLE);
-//        yellowCircle.setVisibility(View.INVISIBLE);
-//
-//        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10, 1, new LocationListener() {
-//            @Override
-//            public void onLocationChanged(@NonNull Location location) {
-//                firstLocUpdate = true;
-//                myloc.setLon(location.getLongitude());
-//                myloc.setLat(location.getLatitude());
-//                compassUpdate(orientationService.getOrientation().getValue());
-//                //lon.setText("Longitude: " + String.valueOf(myloc.getLon()));
-//                //lat.setText("Latitude: " + String.valueOf(myloc.getLat()));
-//            }
-//        });
-//
-//        SharedPreferences preferences = getSharedPreferences("IDvalue", 0);
-//        String locName = preferences.getString("locationOneName", "N/A");
-//        if (locName == "N/A") {
-//            Intent intent = new Intent(this, InputLocation.class);
-//            startActivity(intent);
-//        }
-//    }
-//
-
-
-
-
-//
-//    private void updateSpecificCircle(String locName, String locLat, String locLon, ImageView circle, ImageView legendCircle, TextView legendText) {
-//        if (locName != "N/A") {
-//            Double newAngle = locationRelater.angleCalculation(Double.parseDouble(locLat), Double.parseDouble(locLon));
-//            legendText.setText(locName);
-//            ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) circle.getLayoutParams();
-//            layoutParams.circleAngle = newAngle.floatValue();
-//            circle.setLayoutParams(layoutParams);
-//            if (firstLocUpdate) {
-//                legendCircle.setVisibility(View.VISIBLE);
-//                legendText.setVisibility(View.VISIBLE);
-//                circle.setVisibility(View.VISIBLE);
-//                circle.bringToFront();
-//            }
-//        } else {
-//            legendCircle.setVisibility(View.INVISIBLE);
-//            legendText.setVisibility(View.INVISIBLE);
-//            circle.setVisibility(View.INVISIBLE);
-//        }
-//    }
-
-
-        SharedPreferences preferences = getSharedPreferences("IDvalue", 0);
-        String locName = preferences.getString("locationOneName", "N/A");
-        if (locName == "N/A") {
-            Intent intent = new Intent(this, InputLocation.class);
-            startActivity(intent);
-        }
-    }
-
-    private void compassUpdate(Float az) {
-        SharedPreferences preferences = getSharedPreferences("IDvalue", 0);
-        String locName;
-        String locLat;
-        String locLon;
-        ImageView circle;
-        ImageView legendCircle;
-        TextView legendText;
-
-        ImageView compassCircle;
-
-//        First Point
-        locName = preferences.getString("locationOneName", "N/A");
-        locLat = preferences.getString("locationOneLat", "N/A");
-        locLon = preferences.getString("locationOneLon", "N/A");
-        circle = (ImageView) findViewById(R.id.redImage);
-        legendCircle = (ImageView) findViewById(R.id.redlegendcircle);
-        legendText = (TextView) findViewById(R.id.redlegendtext);
-
-        updateSpecificCircle(locName, locLat, locLon, circle, legendCircle, legendText);
-        rotateLoc(circle, az);
-
-        //        Second Point
-        locName = preferences.getString("locationTwoName", "N/A");
-        locLat = preferences.getString("locationTwoLat", "N/A");
-        locLon = preferences.getString("locationTwoLon", "N/A");
-        circle = (ImageView) findViewById(R.id.blueImage);
-        legendCircle = (ImageView) findViewById(R.id.bluelegendcircle);
-        legendText = (TextView) findViewById(R.id.bluelegendtext);
-
-        updateSpecificCircle(locName, locLat, locLon, circle, legendCircle, legendText);
-        rotateLoc(circle, az);
-
-        //        Third Point
-        locName = preferences.getString("locationThreeName", "N/A");
-        locLat = preferences.getString("locationThreeLat", "N/A");
-        locLon = preferences.getString("locationThreeLon", "N/A");
-        circle = (ImageView) findViewById(R.id.yellowImage);
-        legendCircle = (ImageView) findViewById(R.id.yellowlegendcircle);
-        legendText = (TextView) findViewById(R.id.yellowlegendtext);
-
-        updateSpecificCircle(locName, locLat, locLon, circle, legendCircle, legendText);
-        rotateLoc(circle, az);
-
-        // Update compass overlay
-        compassCircle = (ImageView) findViewById(R.id.compassImage);
-        rotateImg(compassCircle, az);
-
-        solveOverlap();
-
-    }
-
-    private void updateSpecificCircle(String locName, String locLat, String locLon, ImageView circle, ImageView legendCircle, TextView legendText) {
-        if (locName != "N/A") {
-            Double newAngle = locationRelater.angleCalculation(Double.parseDouble(locLat), Double.parseDouble(locLon));
-            legendText.setText(locName);
-            ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) circle.getLayoutParams();
-            layoutParams.circleAngle = newAngle.floatValue();
-            circle.setLayoutParams(layoutParams);
-            if (firstLocUpdate) {
-                legendCircle.setVisibility(View.VISIBLE);
-                legendText.setVisibility(View.VISIBLE);
-                circle.setVisibility(View.VISIBLE);
-                circle.bringToFront();
-            }
-        } else {
-            legendCircle.setVisibility(View.INVISIBLE);
-            legendText.setVisibility(View.INVISIBLE);
-            circle.setVisibility(View.INVISIBLE);
-        }
-    }
-
-*/
-
-/*
-    /**
-     * Rotates the selected image view about a certain angle based on heading.
-     * @param img The image view compass to rotate
-     * @param az Azimuth from current heading
-
-    public void rotateImg(ImageView img, Float az) {
-        if (az == null) { az = 0.0F; }
-        double azDeg = Utilities.radToDeg(az);
-        img.setRotation((float) -(azDeg));
-    }
-
-
-    /**
-     * Rotates location circles
-     * @param img Location circle to rotate
-     * @param az Azimuth from current heading
-
-    public void rotateLoc(ImageView img, Float az) {
-        if (az == null) { return; }
-        double azDeg = Utilities.radToDeg(az);
-        ConstraintLayout.LayoutParams lp = (ConstraintLayout.LayoutParams) img.getLayoutParams();
-        lp.circleAngle -= azDeg;
-        img.setLayoutParams(lp);
-    }
-
-    private void solveOverlap() {
-        final float scale = this.getResources().getDisplayMetrics().density;
-        Log.i("overlap", "scale: " + scale);
-        ImageView circleOne = findViewById(R.id.redImage);
-        ImageView circleTwo = findViewById(R.id.blueImage);
-        ImageView circleThree = findViewById(R.id.yellowImage);
-        boolean overlay12 = checkAngleOverlap(circleOne, circleTwo);
-        boolean overlay23 = checkAngleOverlap(circleTwo, circleThree);
-        boolean overlay31 = checkAngleOverlap(circleThree, circleOne);
-        Log.i("overlap", "overlay12: " + overlay12);
-        Log.i("overlap", "overlay23: " + overlay23);
-        Log.i("overlap", "overlay31: " + overlay31);
-        if ((overlay12 && (overlay23 || overlay31)) || (overlay23 && overlay31)) {
-            setCircleRadius(circleOne, (int) (360 + 0.5f));
-            setCircleRadius(circleTwo, (int) (410 + 0.5f));
-            setCircleRadius(circleThree, (int) (460 + 0.5f));
-            setCircleSize(circleOne, (int) (50 + 0.5f));
-            setCircleSize(circleTwo, (int) (50 + 0.5f));
-            setCircleSize(circleThree, (int) (50 + 0.5f));
-        } else if (overlay12) {
-            setCircleRadius(circleOne, (int) (360 + 0.5f));
-            setCircleRadius(circleTwo, (int) (410 + 0.5f));
-            setCircleSize(circleOne, (int) (50 + 0.5f));
-            setCircleSize(circleTwo, (int) (50 + 0.5f));
-        } else if (overlay23) {
-            setCircleRadius(circleTwo, (int) (360 + 0.5f));
-            setCircleRadius(circleThree, (int) (410 + 0.5f));
-            setCircleSize(circleTwo, (int) (50 + 0.5f));
-            setCircleSize(circleThree, (int) (50 + 0.5f));
-        } else if (overlay31) {
-            setCircleRadius(circleOne, (int) (360 + 0.5f));
-            setCircleRadius(circleThree, (int) (410 + 0.5f));
-            setCircleSize(circleOne, (int) (50 + 0.5f));
-            setCircleSize(circleThree, (int) (50 + 0.5f));
-        } else {
-            setCircleRadius(circleOne, (int) (410 + 0.5f));
-            setCircleRadius(circleTwo, (int) (410 + 0.5f));
-            setCircleRadius(circleThree, (int) (410 + 0.5f));
-            setCircleSize(circleOne, (int) (50 + 0.5f));
-            setCircleSize(circleTwo, (int) (50 + 0.5f));
-            setCircleSize(circleThree, (int) (50 + 0.5f));
-
-        }
-    }
-
-    private boolean checkAngleOverlap(ImageView circleOne, ImageView circleTwo) {
-        ConstraintLayout.LayoutParams layoutParamsOne = (ConstraintLayout.LayoutParams) circleOne.getLayoutParams();
-        ConstraintLayout.LayoutParams layoutParamsTwo = (ConstraintLayout.LayoutParams) circleTwo.getLayoutParams();
-//        Log.i("overlap", "Angle diff: " + Math.abs(layoutParamsOne.circleAngle-layoutParamsTwo.circleAngle));
-//        return false;
-        return Math.abs(layoutParamsOne.circleAngle - layoutParamsTwo.circleAngle) < 10;
-    }
-
-    private void setCircleRadius(ImageView circle, int radius) {
-        ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) circle.getLayoutParams();
-        layoutParams.circleRadius = radius;
-        circle.setLayoutParams(layoutParams);
-    }
-
-    private void setCircleSize(ImageView circle, int size) {
-        ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) circle.getLayoutParams();
-        layoutParams.width = size;
-        layoutParams.height = size;
-        circle.setLayoutParams(layoutParams);
-    }
-
-    public MyLocation getLocation() {
-        return myloc;
-    }
-
-    public void setOrientationMock(MutableLiveData<Float> ld) {
-        orientationService.setMockOrientationSource(ld);
-    }
-
-    public void mockCompassUpdate() {
-        float az = this.orientationService.getOrientation().getValue();
-        this.compassUpdate(az);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        orientationService.unregisterSensorListeners();
-    }
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        orientationService.registerSensorListeners();
-
-        SharedPreferences preferences = getSharedPreferences("IDvalue", 0);
-        String heading_string = preferences.getString("heading", "N/A");
-        if (heading_string != "N/A") {
-
-            float heading_float = Float.parseFloat(heading_string);
-            preferences.edit().remove("heading").commit();
-
-            MutableLiveData<Float> heading_data = new MutableLiveData<Float>();
-            heading_data.setValue(heading_float);
-
-            orientationService.setMockOrientationSource(heading_data);
-        }
-
-
-        compassUpdate(0.0F);
-    }
-
-    public void onNewLocationBtnClicked(View view) {
-        Intent intent = new Intent(this, InputLocation.class);
-
-//        SharedPreferences preferences = getSharedPreferences("IDvalue", 0);
-//        String locationThreeName = preferences.getString("locationThreeName", "N/A");
-//
-//        Log.i("Location 3", locationThreeName);
-//        if (locationThreeName != "N/A") {
-//            Utilities.showAlert(this, "You cannot save any more locations");
-//        } else {
-        startActivity(intent);
-//        }
-     */
-
-
-
-
-
 
     public void onAddFriendClicked(View view) {
         Intent intent = new Intent(this, AddFriendsActivity.class);
