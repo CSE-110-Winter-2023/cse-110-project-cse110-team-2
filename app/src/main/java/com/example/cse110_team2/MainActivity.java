@@ -190,7 +190,7 @@ public class MainActivity extends AppCompatActivity {
                     Log.d("POINT_ANGLE", "sending to display name");
 
                 }
-                displayFriendName(uid, point_angle, friend_distance);
+                displayFriendName(uid, point_angle, friend_distance, az);
             } else {
                 displayDotOnEdge(uid,point_angle);
             }
@@ -205,17 +205,11 @@ public void rotate(Float az, String uid) {
         Float finalAz = az;
         runOnUiThread(new Runnable() {
             public void run() {
-
-
                 HashMap<String, View> friendViews = friendMap.get(uid);
-                View nameView = friendViews.get("text");
                 View dotView = friendViews.get("dot");
-                ConstraintLayout.LayoutParams nameLayout = (ConstraintLayout.LayoutParams) nameView.getLayoutParams();
                 ConstraintLayout.LayoutParams dotLayout = (ConstraintLayout.LayoutParams) dotView.getLayoutParams();
 
-                nameLayout.circleAngle -= Math.toDegrees(finalAz);
                 dotLayout.circleAngle -= Math.toDegrees(finalAz);
-                nameView.setLayoutParams(nameLayout);
                 dotView.setLayoutParams(dotLayout);
             }
         });
@@ -290,20 +284,23 @@ public void rotate(Float az, String uid) {
 
     }
 
-    private void displayFriendName(String uid, double angle, double distance){
+    private void displayFriendName(String uid, double angle, double distance, Float az){
+        if (az == null) { az = 0.0F; }
+        Float finalAz = az;
 
         runOnUiThread(new  Runnable()
         {
             public void run()
             {
                 double newAngle = 90 - 360 - angle;
+                newAngle = (finalAz + Math.toRadians(newAngle));
                 HashMap<String, View> friendViews = friendMap.get(uid);
                 View nameView = friendViews.get("text");
                 View dotView = friendViews.get("dot");
 //                MAX_DIST * distance/zoomManager.get_curr_zoom_max()
                 ConstraintLayout.LayoutParams nameLayout = (ConstraintLayout.LayoutParams) nameView.getLayoutParams();
-                int xShift = (int) (zoomManager.getRadius(distance) * Math.cos(Math.toRadians(newAngle)));
-                int yShift = (int) (zoomManager.getRadius(distance) * Math.sin(Math.toRadians(newAngle)));
+                int xShift = (int) (zoomManager.getRadius(distance) * Math.cos(newAngle));
+                int yShift = (int) (zoomManager.getRadius(distance) * Math.sin(newAngle));
                 Log.d("dist;", "dist: "  + distance);
                 Log.d("dist;", "angle: "  + newAngle);
                 Log.d("dist;", "dist conversion: "  + MAX_RADIUS_OFFSET*distance/zoomManager.get_curr_zoom_max());
