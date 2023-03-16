@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
 
         orientationService = OrientationService.singleton(MainActivity.this);
         orientationService.getOrientation().observe(this, azimuth -> {
-            updateFunctions(azimuth);
+          //  updateFunctions(azimuth);
         });
 
         var executor = Executors.newSingleThreadScheduledExecutor();
@@ -83,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
             friendManager.updateFriendLocations();
             updateFunctions(orientationService.getOrientation().getValue());
             updateLocationStatus();
-        }, 0, 5, TimeUnit.SECONDS);
+        }, 0, 500, TimeUnit.MILLISECONDS);
 
         if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -99,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     myloc.setLon(location.getLongitude());
                     myloc.setLat(location.getLatitude());
-                    updateFunctions(orientationService.getOrientation().getValue());
+                 //   updateFunctions(orientationService.getOrientation().getValue());
                 }
 
                 User mainUser = friendManager.getMainUser();
@@ -197,7 +197,7 @@ public class MainActivity extends AppCompatActivity {
             //TODO: Update friend name here with relative location (longitude and latitude)
             rotate(az, uid);
         }
-        handleNameOverlap();
+    //    handleNameOverlap();
     }
 
 public void rotate(Float az, String uid) {
@@ -287,25 +287,25 @@ public void rotate(Float az, String uid) {
     private void displayFriendName(String uid, double angle, double distance, Float az){
         if (az == null) { az = 0.0F; }
         Float finalAz = az;
+        double newAngle = 90 - 360 - angle;
+        newAngle = (finalAz + Math.toRadians(newAngle));
+        HashMap<String, View> friendViews = friendMap.get(uid);
+        View nameView = friendViews.get("text");
+        View dotView = friendViews.get("dot");
+//                MAX_DIST * distance/zoomManager.get_curr_zoom_max()
+        ConstraintLayout.LayoutParams nameLayout = (ConstraintLayout.LayoutParams) nameView.getLayoutParams();
+        int xShift = (int) (zoomManager.getRadius(distance) * Math.cos(newAngle));
+        int yShift = (int) (zoomManager.getRadius(distance) * Math.sin(newAngle));
+        Log.d("dist;", "dist: "  + distance);
+        Log.d("dist;", "angle: "  + newAngle);
+        Log.d("dist;", "dist conversion: "  + MAX_RADIUS_OFFSET*distance/zoomManager.get_curr_zoom_max());
+        Log.d("dist;", "xShift: "  + xShift);
+        Log.d("dist;", "yShift: "  + yShift);
 
         runOnUiThread(new  Runnable()
         {
             public void run()
             {
-                double newAngle = 90 - 360 - angle;
-                newAngle = (finalAz + Math.toRadians(newAngle));
-                HashMap<String, View> friendViews = friendMap.get(uid);
-                View nameView = friendViews.get("text");
-                View dotView = friendViews.get("dot");
-//                MAX_DIST * distance/zoomManager.get_curr_zoom_max()
-                ConstraintLayout.LayoutParams nameLayout = (ConstraintLayout.LayoutParams) nameView.getLayoutParams();
-                int xShift = (int) (zoomManager.getRadius(distance) * Math.cos(newAngle));
-                int yShift = (int) (zoomManager.getRadius(distance) * Math.sin(newAngle));
-                Log.d("dist;", "dist: "  + distance);
-                Log.d("dist;", "angle: "  + newAngle);
-                Log.d("dist;", "dist conversion: "  + MAX_RADIUS_OFFSET*distance/zoomManager.get_curr_zoom_max());
-                Log.d("dist;", "xShift: "  + xShift);
-                Log.d("dist;", "yShift: "  + yShift);
                 nameLayout.setMargins(((ImageView) findViewById(R.id.compassImage)).getWidth()/2 + xShift,((ImageView) findViewById(R.id.compassImage)).getHeight()/2 - yShift,0,0);
                 nameView.setLayoutParams(nameLayout);
                 dotView.setVisibility(View.INVISIBLE);
@@ -392,6 +392,7 @@ public void rotate(Float az, String uid) {
     private void displayDotOnEdge(String uid, double angle){
         Log.d("DOT-ON-EDGE", "displaying dot on edge");
         Log.d("DOT-ON-EDGE","" + angle + "   " + uid);
+
         runOnUiThread(new  Runnable()
         {
             public void run()
