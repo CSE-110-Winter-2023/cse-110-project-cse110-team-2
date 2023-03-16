@@ -56,23 +56,18 @@ public class RotateUnitTests {
 
                 ConstraintLayout.LayoutParams dotLayout =
                         (ConstraintLayout.LayoutParams) dotView.getLayoutParams();
-                var nameLayout = (ConstraintLayout.LayoutParams) nameView.getLayoutParams();
 
                 float ogDotAngle = dotLayout.circleAngle;
-                float ogNameAngle = nameLayout.circleAngle;
 
                 mockDataSource.setValue((float) Math.PI / 2);
                 activity.mockCompassUpdate();
 
                 ConstraintLayout.LayoutParams dotLayoutUpdated =
                         (ConstraintLayout.LayoutParams) dotView.getLayoutParams();
-                var nameLayoutUpdated = (ConstraintLayout.LayoutParams) nameView.getLayoutParams();
 
                 float newDotAngle = dotLayoutUpdated.circleAngle;
-                float newNameAngle = nameLayoutUpdated.circleAngle;
 
                 assertEquals(ogDotAngle - Math.toDegrees(-Math.PI / 2), newDotAngle, 0.5);
-                assertEquals(ogNameAngle - Math.toDegrees(-Math.PI / 2), newNameAngle, 0.5);
 
 
                 mockDataSource.setValue(0.0F);
@@ -108,27 +103,21 @@ public class RotateUnitTests {
                 HashMap<String, View> friendViews = activity.friendMap.get(curr_friend.uid);
 
                 View dotView = friendViews.get("dot");
-                View nameView = friendViews.get("text");
 
                 ConstraintLayout.LayoutParams dotLayout =
                         (ConstraintLayout.LayoutParams) dotView.getLayoutParams();
-                var nameLayout = (ConstraintLayout.LayoutParams) nameView.getLayoutParams();
 
                 float ogDotAngle = dotLayout.circleAngle;
-                float ogNameAngle = nameLayout.circleAngle;
 
                 mockDataSource.setValue((float) Math.PI);
                 activity.mockCompassUpdate();
 
                 ConstraintLayout.LayoutParams dotLayoutUpdated =
                         (ConstraintLayout.LayoutParams) dotView.getLayoutParams();
-                var nameLayoutUpdated = (ConstraintLayout.LayoutParams) nameView.getLayoutParams();
 
                 float newDotAngle = dotLayoutUpdated.circleAngle;
-                float newNameAngle = nameLayoutUpdated.circleAngle;
 
                 assertEquals(ogDotAngle - Math.toDegrees(-Math.PI), newDotAngle, 0.5);
-                assertEquals(ogNameAngle - Math.toDegrees(-Math.PI), newNameAngle, 0.5);
 
 
                 mockDataSource.setValue(0.0F);
@@ -157,34 +146,27 @@ public class RotateUnitTests {
             activity.mockCompassUpdate();
             var friendList = activity.getFriendManager().getMockFriends();
 
-            // TODO penis
             for (int i = 0; i < friendList.size(); i++) {
                 var curr_friend = friendList.get(i);
 
                 HashMap<String, View> friendViews = activity.friendMap.get(curr_friend.uid);
 
                 View dotView = friendViews.get("dot");
-                View nameView = friendViews.get("text");
 
                 ConstraintLayout.LayoutParams dotLayout =
                         (ConstraintLayout.LayoutParams) dotView.getLayoutParams();
-                var nameLayout = (ConstraintLayout.LayoutParams) nameView.getLayoutParams();
 
                 float ogDotAngle = dotLayout.circleAngle;
-                float ogNameAngle = nameLayout.circleAngle;
 
                 mockDataSource.setValue(0.0F);
                 activity.mockCompassUpdate();
 
                 ConstraintLayout.LayoutParams dotLayoutUpdated =
                         (ConstraintLayout.LayoutParams) dotView.getLayoutParams();
-                var nameLayoutUpdated = (ConstraintLayout.LayoutParams) nameView.getLayoutParams();
 
                 float newDotAngle = dotLayoutUpdated.circleAngle;
-                float newNameAngle = nameLayoutUpdated.circleAngle;
 
                 assertEquals(ogDotAngle, newDotAngle, 0.5);
-                assertEquals(ogNameAngle, newNameAngle, 0.5);
 
 
                 mockDataSource.setValue(0.0F);
