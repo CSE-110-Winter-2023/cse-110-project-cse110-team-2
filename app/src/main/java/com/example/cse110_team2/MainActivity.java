@@ -449,6 +449,12 @@ public void rotate(Float az, String uid) {
 
     public void mockCompassUpdate() {
         float az = this.orientationService.getOrientation().getValue();
+        this.updateFunctions(az);
+    }
+
+    public void mockLoc() {
+        this.myloc.setLat(0f);
+        this.myloc.setLon(0f);
     }
 
     @Override
@@ -462,6 +468,10 @@ public void rotate(Float az, String uid) {
         super.onResume();
         orientationService = OrientationService.singleton(this);
         orientationService.registerSensorListeners();
+    }
+
+    public void mockUpsertLoc(String uid, String name) {
+        this.upsertFriendMap(uid, name);
     }
 /*
 //
