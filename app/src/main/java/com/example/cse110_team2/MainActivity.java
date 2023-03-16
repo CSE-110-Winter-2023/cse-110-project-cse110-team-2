@@ -355,16 +355,33 @@ public void rotate(Float az, String uid) {
                         view1.measure(0,0);
                     }
                 }
+                for (int i = 0; i< friendViews.size(); i++) {
+                    Log.d("NEW TIMERS TUFF", " NEW STUFF " + ((TextView)friendViews.get(i)).getText());
+                }
                 int i = 0;
                 while (i < friendViews.size()-1) {
                     TextView view1 = (TextView)friendViews.get(i);
                     view1.measure(0,0);
                     TextView view2 = (TextView)friendViews.get(i+1);
                     view2.measure(0,0);
+                    Log.d("upsert friend name", "name1"+ i + "  "  + view1.getText());
+                    Log.d("upsert friend name", "name2"+ (int)(i+1) + "  "  + view2.getText());
+
                     if (view1.getX() == 0.0 || view2.getX() == 0.0) {
                         break;
                     }
-                    if (view1.getX() == view2.getX() && view1.getY() == view2.getY()){
+                    if (view1.getText() == ""){
+                        friendViews.remove(i);
+                        continue;
+                    }
+                    if (view2.getText() == ""){
+                        friendViews.remove(i+1);
+                        continue;
+                    }
+                    if (Math.abs(view1.getX()-view2.getX()) < 5  && Math.abs(view1.getY()-view2.getY()) < 5){
+                        Log.d("upsert friend name", "In Combine view");
+                        Log.d("upsert friend name", "name1: " + view1.getText());
+                        Log.d("upsert friend name", "name2: " + view2.getText());
                         view1.setText(view1.getText() + " & " + view2.getText());
                         view2.setText("");
                         friendViews.remove(i+1);
@@ -376,10 +393,8 @@ public void rotate(Float az, String uid) {
                             view1.setText(view1.getText().subSequence(0,view1.getText().length()-1));
                             view1.measure(0,0);
                         }
+                        i++;
                     }
-                    Log.d("timer", i + "  " + view1.getX());
-                    Log.d("timer", i + "  " + view2.getMeasuredWidth());
-                    i++;
                 }
             }
         });
