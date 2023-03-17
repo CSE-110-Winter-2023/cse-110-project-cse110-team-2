@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
         friendMap = new HashMap<String, HashMap<String, View>>();
         fakeTextMap = new HashMap<String, TextView>();
         orientationService = OrientationService.singleton(MainActivity.this);
-//        orientationService.getOrientation().observe(this);
+
 
         var executor = Executors.newSingleThreadScheduledExecutor();
         ScheduledFuture<?> poller = executor.scheduleAtFixedRate(() -> {
@@ -127,6 +127,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean getMock(){
         return this.inMock;
     }
+
 
 
     public void updateFunctions(Float az){
@@ -308,7 +309,7 @@ public void rotate(Float az, String uid) {
         HashMap<String, View> friendViews = friendMap.get(uid);
         TextView fakeView = fakeTextMap.get(uid);
         View nameView = friendViews.get("text");
-        View dotView = friendViews.get("dot");
+        View dotView = friendViews.get("dot");      //0.05728
 //                MAX_DIST * distance/zoomManager.get_curr_zoom_max()
         ConstraintLayout.LayoutParams nameLayout = (ConstraintLayout.LayoutParams) nameView.getLayoutParams();
         ConstraintLayout.LayoutParams fakeLayout = (ConstraintLayout.LayoutParams) fakeView.getLayoutParams();
@@ -443,6 +444,7 @@ public void rotate(Float az, String uid) {
 
     public void mockCompassUpdate() {
         float az = this.orientationService.getOrientation().getValue();
+        this.updateFunctions(az);
     }
 
     @Override
@@ -490,8 +492,17 @@ public void rotate(Float az, String uid) {
         zoomInBtn.setEnabled(canZoomIn);
         zoomOutBtn.setEnabled(canZoomOut);
 
-
     }
+
+    public void mockUpsertLoc(String uid, String name) {
+        this.upsertFriendMap(uid, name);
+    }
+
+    public void mockLoc() {
+        this.myloc.setLat(0.0f);
+        this.myloc.setLon(0.0f);
+    }
+
 }
 
 
