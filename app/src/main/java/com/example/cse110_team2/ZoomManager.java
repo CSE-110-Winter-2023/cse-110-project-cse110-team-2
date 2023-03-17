@@ -10,7 +10,7 @@ public class ZoomManager {
     double compassWidth;
 
     public ZoomManager(){
-        this.zoomAmount = 0;
+        this.zoomAmount = 1;
         this.zoomLimit = new int[]{1, 10, 500, 50000};
         this.relativePixelWidth = new double[]{200, 100, 66.66, 50};
     }
@@ -24,10 +24,10 @@ public class ZoomManager {
     }
 
     public double getCompassWidth(){
-        return this.compassWidth;
+        return this.compassWidth * .9;
     }
     private double getCompassWidthRatio(){
-        return compassWidth/400;
+        return getCompassWidth()/400;
     }
 
     public double getRadius(double distance){
