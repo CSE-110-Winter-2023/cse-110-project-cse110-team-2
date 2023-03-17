@@ -80,10 +80,15 @@ public class MainActivity extends AppCompatActivity {
 
         var executor = Executors.newSingleThreadScheduledExecutor();
         ScheduledFuture<?> poller = executor.scheduleAtFixedRate(() -> {
-            friendManager.updateFriendLocations();
             updateFunctions(orientationService.getOrientation().getValue());
             updateLocationStatus();
         }, 0, 500, TimeUnit.MILLISECONDS);
+
+        var executor2 = Executors.newSingleThreadScheduledExecutor();
+        ScheduledFuture<?> poller2 = executor2.scheduleAtFixedRate(() -> {
+            friendManager.updateFriendLocations();
+        }, 0, 5, TimeUnit.SECONDS);
+
 
         if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -103,8 +108,10 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 User mainUser = friendManager.getMainUser();
-                mainUser.setLatitude((float)myloc.getLat());
-                mainUser.setLongitude((float) myloc.getLon());
+                if (mainUser != null) {
+                    mainUser.setLatitude((float)myloc.getLat());
+                    mainUser.setLongitude((float) myloc.getLon());
+                }
                 SharedCompassAPI api = SharedCompassAPI.provide();
                 api.updateUserLocationAsync(mainUser);
             }
@@ -153,6 +160,7 @@ public class MainActivity extends AppCompatActivity {
         float latitude;
         User curr_friend;
         ArrayList<User> friendList = friendManager.getFriends();
+        Log.d("CLICK 2", "friend list length " + friendList.size());
 //        User us1 = new User("tomo", "thissirandom", (float)-110.3, (float)50.3, "hello");
 ////        37.3064, -121.9967
 //        User us2 = new User("john", "thissirandom22", (float)-121.9964, (float)37.3064, "hello123");
@@ -198,7 +206,7 @@ public class MainActivity extends AppCompatActivity {
             //TODO: Update friend name here with relative location (longitude and latitude)
             rotate(az, uid);
         }
-    //    handleNameOverlap();
+//        handleNameOverlap();
     }
 
 public void rotate(Float az, String uid) {
@@ -373,6 +381,7 @@ public void rotate(Float az, String uid) {
                         view1.setText(view1.getText() + " & " + view2.getText());
                         view2.setText("");
                         friendViews.remove(i+1);
+                        continue;
                     }
                     else if (view1.getY() <= view2.getY() && view1.getY()+view1.getMeasuredHeight() >= view2.getY()
                             || view1.getY() <= view2.getY()+view2.getMeasuredHeight() && view1.getY()+view1.getMeasuredHeight() >= view2.getY()+view2.getMeasuredHeight()){
@@ -381,8 +390,9 @@ public void rotate(Float az, String uid) {
                             view1.setText(view1.getText().subSequence(0,view1.getText().length()-1));
                             view1.measure(0,0);
                         }
-                        i++;
+
                     }
+                    i++;
                 }
             }
         });
@@ -453,12 +463,14 @@ public void rotate(Float az, String uid) {
         zoomManager.zoomIn();
         updateZoomButtons();
         updateCompassImage();
+//        updateLocationStatus();
 //        Log.d("PRINTING TEST:", "Zoom in");
     }
     public void zoomOutClicked(View view){
         zoomManager.zoomOut();
         updateZoomButtons();
         updateCompassImage();
+//        updateLocationStatus();
 //        Log.d("PRINTING TEST:", "Zoom out");
 
     }
