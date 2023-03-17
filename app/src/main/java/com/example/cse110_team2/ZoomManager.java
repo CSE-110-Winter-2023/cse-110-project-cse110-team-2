@@ -24,10 +24,10 @@ public class ZoomManager {
     }
 
     public double getCompassWidth(){
-        return this.compassWidth;
+        return this.compassWidth * .9;
     }
     private double getCompassWidthRatio(){
-        return compassWidth/400;
+        return getCompassWidth()/400;
     }
 
     public double getRadius(double distance){

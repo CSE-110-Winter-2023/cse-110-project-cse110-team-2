@@ -29,6 +29,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import org.w3c.dom.Text;
+
 import java.util.HashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledFuture;
@@ -48,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
     private ZoomManager zoomManager;
     private boolean inMock;
     public HashMap<String, HashMap<String, View>> friendMap;
+    public HashMap<String, TextView> fakeTextMap;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
         layout = (ConstraintLayout)findViewById(R.id.compasslayout);
 
         friendMap = new HashMap<String, HashMap<String, View>>();
-
+        fakeTextMap = new HashMap<String, TextView>();
         orientationService = OrientationService.singleton(MainActivity.this);
 
 
@@ -158,11 +162,12 @@ public class MainActivity extends AppCompatActivity {
         float latitude;
         User curr_friend;
         ArrayList<User> friendList = friendManager.getFriends();
-        Log.d("CLICK 2", "friend list length " + friendList.size());
+//        friendList = new ArrayList<User>();
+//        Log.d("CLICK 2", "friend list length " + friendList.size());
 //        User us1 = new User("tomo", "thissirandom", (float)-110.3, (float)50.3, "hello");
 ////        37.3064, -121.9967
 //        User us2 = new User("john", "thissirandom22", (float)-121.9964, (float)37.3064, "hello123");
-//        User us3 = new User("buzzy", "thissirandom33", (float)-125, (float)38.3304, "hello12345");
+//        User us3 = new User("buzzy", "thissirandom33", (float)-121, (float)38.3304, "hello12345");
 //        friendList.add(us1);
 //        friendList.add(us2);
 //        friendList.add(us3);
@@ -183,20 +188,7 @@ public class MainActivity extends AppCompatActivity {
             latitude = curr_friend.latitude;
             double point_angle = locationRelater.angleCalculation(latitude, longitude);
             double friend_distance = locationRelater.distanceCalculation(latitude, longitude);
-
-            if(name == "john") {
-                Log.d("POINT_ANGLE", uid + " " + longitude + " " + latitude);
-                Log.d("POINT_ANGLE", "" + point_angle + "\n\n");
-                Log.d("POINT_ANGLE", "" + locationRelater.myCoords.getLon() + " " + locationRelater.myCoords.getLat() + "\n\n");
-                Log.d("POINT_ANGLE", "" + friend_distance + "\n\n");
-                Log.d("friends", " " + friend_distance);
-                Log.d("friends", " " + zoomManager.get_curr_zoom_max());
-            }
             if(friend_distance < zoomManager.get_curr_zoom_max()){
-                if(name == "john"){
-                    Log.d("POINT_ANGLE", "sending to display name");
-
-                }
                 displayFriendName(uid, point_angle, friend_distance, az);
             } else {
                 displayDotOnEdge(uid,point_angle);
@@ -204,7 +196,7 @@ public class MainActivity extends AppCompatActivity {
             //TODO: Update friend name here with relative location (longitude and latitude)
             rotate(az, uid);
         }
-//        handleNameOverlap();
+        handleNameOverlap();
     }
 
 public void rotate(Float az, String uid) {
@@ -239,6 +231,15 @@ public void rotate(Float az, String uid) {
                     nameView.setTextSize(12);
                     layout.addView(nameView);
 
+                    TextView fakeNameView = new TextView(MainActivity.this);
+                    ViewGroup.LayoutParams fakeParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+                    fakeNameView.setLayoutParams(fakeParams);
+                    fakeNameView.setText(name);
+                    fakeNameView.setId(View.generateViewId());
+                    fakeNameView.setVisibility(View.INVISIBLE);
+                    fakeNameView.setTextSize(12);
+                    layout.addView(fakeNameView);
+
                     ImageView dotView = new ImageView(MainActivity.this);
                     dotView.setImageResource(R.drawable.redcircle);
                     dotView.setId(View.generateViewId());
@@ -255,7 +256,16 @@ public void rotate(Float az, String uid) {
 
                     viewMap.put("text", nameView);
                     viewMap.put("dot", dotView);
+                    fakeTextMap.put(uid, fakeNameView);
                     friendMap.put(uid, viewMap);
+                }
+            });
+        } else {
+            runOnUiThread(new  Runnable() {
+                @Override
+                public void run() {
+                    TextView friendText = fakeTextMap.get(uid);
+                    friendText.setText(name);
                 }
             });
         }
@@ -297,12 +307,15 @@ public void rotate(Float az, String uid) {
         double newAngle = 90 - 360 - angle;
         newAngle = (finalAz + Math.toRadians(newAngle));
         HashMap<String, View> friendViews = friendMap.get(uid);
+        TextView fakeView = fakeTextMap.get(uid);
         View nameView = friendViews.get("text");
         View dotView = friendViews.get("dot");      //0.05728
 //                MAX_DIST * distance/zoomManager.get_curr_zoom_max()
         ConstraintLayout.LayoutParams nameLayout = (ConstraintLayout.LayoutParams) nameView.getLayoutParams();
+        ConstraintLayout.LayoutParams fakeLayout = (ConstraintLayout.LayoutParams) fakeView.getLayoutParams();
         int xShift = (int) (zoomManager.getRadius(distance) * Math.cos(newAngle));
         int yShift = (int) (zoomManager.getRadius(distance) * Math.sin(newAngle));
+        Log.d("dist", "name: "+ uid);
         Log.d("dist;", "dist: "  + distance);
         Log.d("dist;", "angle: "  + newAngle);
         Log.d("dist;", "dist conversion: "  + MAX_RADIUS_OFFSET*distance/zoomManager.get_curr_zoom_max());
@@ -314,7 +327,10 @@ public void rotate(Float az, String uid) {
             public void run()
             {
                 nameLayout.setMargins(((ImageView) findViewById(R.id.compassImage)).getWidth()/2 + xShift,((ImageView) findViewById(R.id.compassImage)).getHeight()/2 - yShift,0,0);
+                fakeLayout.setMargins(((ImageView) findViewById(R.id.compassImage)).getWidth()/2 + xShift,((ImageView) findViewById(R.id.compassImage)).getHeight()/2 - yShift,0,0);
                 nameView.setLayoutParams(nameLayout);
+                fakeView.setLayoutParams(fakeLayout);
+                fakeView.setVisibility(View.INVISIBLE);
                 dotView.setVisibility(View.INVISIBLE);
                 nameView.setVisibility(View.VISIBLE);
             }
@@ -326,41 +342,24 @@ public void rotate(Float az, String uid) {
         {
             public void run()
             {
-                ImageView compass = (ImageView) findViewById(R.id.compassImage);
-                Log.d("timer", "Compass width: " + compass.getMeasuredWidth());
                 ArrayList<View> friendViews = new ArrayList<View>();
-                Log.d("timer", "calm");
+//                friendMap.forEach((uid,view) -> {
+//                    if (view.get("text").getVisibility() == View.VISIBLE) {
+//                        friendViews.add(view.get("text"));
+//                    }
+//                });
                 friendMap.forEach((uid,view) -> {
-                    if (view.get("text").getVisibility() == View.VISIBLE) {
-                        friendViews.add(view.get("text"));
+                    if (view.get("dot").getVisibility() == View.INVISIBLE) {
+                        friendViews.add(fakeTextMap.get(uid));
                     }
                 });
                 friendViews.sort((v1,v2) -> (int)(v1.getX()-v2.getX()));
-                for (int i = 0; i< friendViews.size(); i++) {
-                    Log.d("timer", " NEW STUFF " + ((TextView)friendViews.get(i)).getText());
-                }
-                for(int i = 0; i < friendViews.size(); i++) {
-                    TextView view1 = (TextView)friendViews.get(i);
-                    view1.measure(0,0);
-                    while (view1.getText().length() > 0 && view1.getMeasuredWidth() + view1.getX() > ((ImageView)findViewById(R.id.compassImage)).getWidth()/2+Math.sqrt(Math.pow(MAX_DIST,2) - (Math.pow((double)(view1.getY()-((ImageView)findViewById(R.id.compassImage)).getHeight()/2),2)))){
-                        Log.d("math sin", "" + view1.getMeasuredWidth() + view1.getX());
-                        Log.d("math sin", "" + Math.sqrt(Math.pow(MAX_DIST,2) - (Math.pow((double)(view1.getY()-((ImageView)findViewById(R.id.compassImage)).getHeight()/2),2))));
-                        view1.setText(view1.getText().subSequence(0,view1.getText().length()-1));
-                        view1.measure(0,0);
-                    }
-                }
-                for (int i = 0; i< friendViews.size(); i++) {
-                    Log.d("NEW TIMERS TUFF", " NEW STUFF " + ((TextView)friendViews.get(i)).getText());
-                }
                 int i = 0;
                 while (i < friendViews.size()-1) {
                     TextView view1 = (TextView)friendViews.get(i);
                     view1.measure(0,0);
                     TextView view2 = (TextView)friendViews.get(i+1);
                     view2.measure(0,0);
-                    Log.d("upsert friend name", "name1"+ i + "  "  + view1.getText());
-                    Log.d("upsert friend name", "name2"+ (int)(i+1) + "  "  + view2.getText());
-
                     if (view1.getX() == 0.0 || view2.getX() == 0.0) {
                         break;
                     }
@@ -373,9 +372,6 @@ public void rotate(Float az, String uid) {
                         continue;
                     }
                     if (Math.abs(view1.getX()-view2.getX()) < 5  && Math.abs(view1.getY()-view2.getY()) < 5){
-                        Log.d("upsert friend name", "In Combine view");
-                        Log.d("upsert friend name", "name1: " + view1.getText());
-                        Log.d("upsert friend name", "name2: " + view2.getText());
                         view1.setText(view1.getText() + " & " + view2.getText());
                         view2.setText("");
                         friendViews.remove(i+1);
@@ -384,14 +380,27 @@ public void rotate(Float az, String uid) {
                     else if (view1.getY() <= view2.getY() && view1.getY()+view1.getMeasuredHeight() >= view2.getY()
                             || view1.getY() <= view2.getY()+view2.getMeasuredHeight() && view1.getY()+view1.getMeasuredHeight() >= view2.getY()+view2.getMeasuredHeight()){
                         while (view1.getMeasuredWidth() + view1.getX() > view2.getX() && view1.getText().length() > 0){
-                            Log.d("timer", i + "  " + view1.getText() + "  ,   " + view2.getText());
                             view1.setText(view1.getText().subSequence(0,view1.getText().length()-1));
                             view1.measure(0,0);
                         }
-
                     }
                     i++;
                 }
+                for(i = 0; i < friendViews.size(); i++) {
+                    TextView view1 = (TextView)friendViews.get(i);
+                    view1.measure(0,0);
+                    while (view1.getText().length() > 0 && view1.getMeasuredWidth() + view1.getX() > ((ImageView)findViewById(R.id.compassImage)).getWidth()/2+Math.sqrt(Math.pow(MAX_DIST,2) - (Math.pow((double)(view1.getY()-((ImageView)findViewById(R.id.compassImage)).getHeight()/2),2)))){
+                        view1.setText(view1.getText().subSequence(0,view1.getText().length()-1));
+                        view1.measure(0,0);
+                    }
+                }
+                fakeTextMap.forEach((uid,fakeView) -> {
+                    if (friendMap.get(uid).get("dot").getVisibility() == View.INVISIBLE) {
+                        TextView friendText =  (TextView) friendMap.get(uid).get("text");
+                        friendText.setText(fakeView.getText());
+                        friendText.setVisibility(View.VISIBLE);
+                    }
+                });
             }
         });
     }
