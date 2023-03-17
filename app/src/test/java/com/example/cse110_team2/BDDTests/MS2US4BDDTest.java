@@ -2,15 +2,6 @@ package com.example.cse110_team2.BDDTests;
 
 import static org.junit.Assert.assertEquals;
 
-import android.content.SharedPreferences;
-import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
-
-
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.lifecycle.Lifecycle;
-import androidx.test.core.app.ActivityScenario;
 
 import org.junit.Before;
 import org.junit.Test;
