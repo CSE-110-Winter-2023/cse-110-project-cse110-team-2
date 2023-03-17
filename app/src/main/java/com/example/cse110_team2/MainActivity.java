@@ -484,14 +484,6 @@ public void rotate(Float az, String uid) {
         this.myloc.setLon(0.0f);
     }
 
-    public void mockUpsertLoc(String uid, String name) {
-        this.upsertFriendMap(uid, name);
-    }
-
-    public void mockLoc() {
-        this.myloc.setLat(0.0f);
-        this.myloc.setLon(0.0f);
-    }
 }
 
 
