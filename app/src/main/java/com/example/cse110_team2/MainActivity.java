@@ -427,6 +427,8 @@ public void rotate(Float az, String uid) {
 
     public void mockCompassUpdate() {
         float az = this.orientationService.getOrientation().getValue();
+        this.updateFunctions(az);
+
     }
 
     @Override
@@ -472,7 +474,15 @@ public void rotate(Float az, String uid) {
         zoomInBtn.setEnabled(canZoomIn);
         zoomOutBtn.setEnabled(canZoomOut);
 
+    }
 
+    public void mockUpsertLoc(String uid, String name) {
+        this.upsertFriendMap(uid, name);
+    }
+
+    public void mockLoc() {
+        this.myloc.setLat(0.0f);
+        this.myloc.setLon(0.0f);
     }
 }
 
