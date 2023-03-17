@@ -37,7 +37,7 @@ public class AddFriendsActivity extends AppCompatActivity {
         if(textViewStr.length() > 0 && textViewStr != null) {
             Log.d("CLICK", "inside");
             User friend = api.getUserAsync(textViewStr);
-            if (friend.name != null) {
+            if (friend != null && friend.name != null) {
                 friendManager.addFriend(friend);
                 friendManager.saveFriendsToSharedPreferences(preferences);
             }

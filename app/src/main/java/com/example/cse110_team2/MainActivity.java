@@ -80,10 +80,15 @@ public class MainActivity extends AppCompatActivity {
 
         var executor = Executors.newSingleThreadScheduledExecutor();
         ScheduledFuture<?> poller = executor.scheduleAtFixedRate(() -> {
-            friendManager.updateFriendLocations();
             updateFunctions(orientationService.getOrientation().getValue());
             updateLocationStatus();
         }, 0, 500, TimeUnit.MILLISECONDS);
+
+        var executor2 = Executors.newSingleThreadScheduledExecutor();
+        ScheduledFuture<?> poller2 = executor2.scheduleAtFixedRate(() -> {
+            friendManager.updateFriendLocations();
+        }, 0, 5, TimeUnit.SECONDS);
+
 
         if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -200,7 +205,7 @@ public class MainActivity extends AppCompatActivity {
             //TODO: Update friend name here with relative location (longitude and latitude)
             rotate(az, uid);
         }
-        handleNameOverlap();
+//        handleNameOverlap();
     }
 
 public void rotate(Float az, String uid) {

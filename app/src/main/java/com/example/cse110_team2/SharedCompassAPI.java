@@ -30,6 +30,7 @@ public class SharedCompassAPI {
     public static final MediaType JSON
             = MediaType.get("application/json; charset=utf-8");
 
+    public final String dbURL = "https://socialcompass.goto.ucsd.edu/location/";
     public SharedCompassAPI(){
         this.client = new OkHttpClient();
     }
@@ -45,7 +46,7 @@ public class SharedCompassAPI {
     public User getUser(String uid){
 
         var request = new Request.Builder()
-                .url("https://socialcompass.goto.ucsd.edu/location/" + uid)
+                .url(dbURL + uid)
                 .method("GET", null)
                 .build();
 
@@ -76,7 +77,7 @@ public class SharedCompassAPI {
 
         RequestBody body = RequestBody.create(obj.toString(), JSON);
         Request request = new Request.Builder()
-                .url("https://socialcompass.goto.ucsd.edu/location/" + user.uid)
+                .url(dbURL + user.uid)
                 .method("PATCH", body)
                 .build();
 
@@ -101,7 +102,7 @@ public class SharedCompassAPI {
         RequestBody body = RequestBody.create(json.toString(), JSON);
 
         Request request = new Request.Builder()
-                .url("https://socialcompass.goto.ucsd.edu/location/" + user.uid)
+                .url(dbURL+ user.uid)
                 .method("PUT", body)
                 .build();
 
@@ -113,7 +114,7 @@ public class SharedCompassAPI {
             e.printStackTrace();
         }
 
-        publishUser(user);
+    //    publishUser(user);
     }
 
     @WorkerThread
@@ -121,7 +122,7 @@ public class SharedCompassAPI {
         RequestBody body = RequestBody.create(user.toJSON(), JSON);
 
         Request request = new Request.Builder()
-                .url("https://socialcompass.goto.ucsd.edu/location/" + user.uid)
+                .url(dbURL + user.uid)
                 .method("PATCH", body)
                 .build();
 
@@ -144,7 +145,7 @@ public class SharedCompassAPI {
 
         RequestBody body = RequestBody.create(obj.toString(), JSON);
         Request request = new Request.Builder()
-                .url("https://socialcompass.goto.ucsd.edu/location/" + user.uid)
+                .url(dbURL+ user.uid)
                 .method("DELETE", body)
                 .build();
 
