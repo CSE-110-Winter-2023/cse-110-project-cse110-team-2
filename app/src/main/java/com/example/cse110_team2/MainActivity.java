@@ -74,9 +74,7 @@ public class MainActivity extends AppCompatActivity {
         friendMap = new HashMap<String, HashMap<String, View>>();
 
         orientationService = OrientationService.singleton(MainActivity.this);
-        orientationService.getOrientation().observe(this, azimuth -> {
-          //  updateFunctions(azimuth);
-        });
+
 
         var executor = Executors.newSingleThreadScheduledExecutor();
         ScheduledFuture<?> poller = executor.scheduleAtFixedRate(() -> {
