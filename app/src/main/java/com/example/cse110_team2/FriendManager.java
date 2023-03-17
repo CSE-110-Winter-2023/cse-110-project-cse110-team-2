@@ -69,7 +69,7 @@ public class FriendManager {
 //        Log.d("CLICK", "checking publicID " + publicID);
         User user = api.getUserAsync(publicID);
 //        Log.d("CLICK", "checking USER " + user.uid + "  " + user.name);
-        if(user.name != null) {
+        if(user != null && user.name != null) {
             user.private_code = privateID;
             user.name = userName;
             if(mainUser ==null)

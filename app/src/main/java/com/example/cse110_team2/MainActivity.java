@@ -103,8 +103,10 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 User mainUser = friendManager.getMainUser();
-                mainUser.setLatitude((float)myloc.getLat());
-                mainUser.setLongitude((float) myloc.getLon());
+                if (mainUser != null) {
+                    mainUser.setLatitude((float)myloc.getLat());
+                    mainUser.setLongitude((float) myloc.getLon());
+                }
                 SharedCompassAPI api = SharedCompassAPI.provide();
                 api.updateUserLocationAsync(mainUser);
             }
@@ -454,14 +456,14 @@ public void rotate(Float az, String uid) {
         zoomManager.zoomIn();
         updateZoomButtons();
         updateCompassImage();
-        updateLocationStatus();
+//        updateLocationStatus();
 //        Log.d("PRINTING TEST:", "Zoom in");
     }
     public void zoomOutClicked(View view){
         zoomManager.zoomOut();
         updateZoomButtons();
         updateCompassImage();
-        updateLocationStatus();
+//        updateLocationStatus();
 //        Log.d("PRINTING TEST:", "Zoom out");
 
     }
