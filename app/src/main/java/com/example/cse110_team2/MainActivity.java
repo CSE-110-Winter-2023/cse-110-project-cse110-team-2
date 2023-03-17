@@ -292,7 +292,7 @@ public void rotate(Float az, String uid) {
         newAngle = (finalAz + Math.toRadians(newAngle));
         HashMap<String, View> friendViews = friendMap.get(uid);
         View nameView = friendViews.get("text");
-        View dotView = friendViews.get("dot");
+        View dotView = friendViews.get("dot");      //0.05728
 //                MAX_DIST * distance/zoomManager.get_curr_zoom_max()
         ConstraintLayout.LayoutParams nameLayout = (ConstraintLayout.LayoutParams) nameView.getLayoutParams();
         int xShift = (int) (zoomManager.getRadius(distance) * Math.cos(newAngle));

@@ -1,4 +1,3 @@
-
 package com.example.cse110_team2.BDDTests;
 
 import static org.junit.Assert.assertEquals;
@@ -207,7 +206,4 @@ public class MS2US4BDDTest {
 
 
 }
-
-
-
 
